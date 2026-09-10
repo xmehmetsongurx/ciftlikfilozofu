@@ -38,9 +38,25 @@
         <label>E-posta<input id="loginEmail" type="email" autocomplete="username" required placeholder="mail@adresin.com"></label>
         <label>Şifre<input id="loginPassword" type="password" autocomplete="current-password" required placeholder="••••••••"></label>
         <button class="button primary" type="submit">Giriş yap <span>→</span></button>
+        <button class="button ghost" type="button" id="forgotPasswordBtn">Şifremi unuttum</button>
         <p class="form-message" id="loginMessage" aria-live="polite"></p>
       </form>
       <a class="back-link" href="index.html">← Siteye dön</a>
+    </section>
+  </main>
+
+  <main id="recoveryView" class="center-view hidden">
+    <section class="auth-card">
+      <div class="monogram">ÇF</div>
+      <p class="eyebrow">Şifre yenileme</p>
+      <h1>Yeni şifreni<br><em>belirle.</em></h1>
+      <p>Yeni şifreni iki kez yaz. Kaydettiğinde yönetim panelin açılacak.</p>
+      <form id="recoveryForm" class="stack-form">
+        <label>Yeni şifre<input id="newPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="En az 8 karakter"></label>
+        <label>Yeni şifre tekrar<input id="newPasswordAgain" type="password" autocomplete="new-password" minlength="8" required placeholder="Şifreni tekrar yaz"></label>
+        <button class="button primary" type="submit">Şifreyi kaydet <span>→</span></button>
+        <p class="form-message" id="recoveryMessage" aria-live="polite"></p>
+      </form>
     </section>
   </main>
 

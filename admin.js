@@ -1,5 +1,6 @@
 const setupView = document.getElementById('setupView');
 const loginView = document.getElementById('loginView');
+const recoveryView = document.getElementById('recoveryView');
 const adminView = document.getElementById('adminView');
 const editorDialog = document.getElementById('editorDialog');
 const confirmDialog = document.getElementById('confirmDialog');
@@ -33,7 +34,7 @@ function formatDate(value) {
 }
 
 function setVisible(view) {
-  [setupView, loginView, adminView].forEach(v => v.classList.add('hidden'));
+  [setupView, loginView, recoveryView, adminView].forEach(v => v.classList.add('hidden'));
   view.classList.remove('hidden');
 }
 
@@ -44,19 +45,31 @@ async function init() {
   }
 
   client = window.supabase.createClient(window.CF_SUPABASE.url, window.CF_SUPABASE.key);
+
+  const params = new URLSearchParams(window.location.search);
+  const recoveryRequested = params.get('recovery') === '1' || window.location.hash.includes('type=recovery');
   const { data } = await client.auth.getSession();
-  if (data.session) {
+
+  if (recoveryRequested) {
+    setVisible(recoveryView);
+  } else if (data.session) {
     setVisible(adminView);
     await loadAll();
   } else {
     setVisible(loginView);
   }
 
-  client.auth.onAuthStateChange(async (_event, session) => {
-    if (session) {
+  client.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      setVisible(recoveryView);
+      return;
+    }
+    if (session && !recoveryRequested) {
       setVisible(adminView);
       await loadAll();
-    } else setVisible(loginView);
+    } else if (!session && !recoveryRequested) {
+      setVisible(loginView);
+    }
   });
 }
 
@@ -230,7 +243,65 @@ document.getElementById('loginForm').addEventListener('submit', async e => {
     email: document.getElementById('loginEmail').value.trim(),
     password: document.getElementById('loginPassword').value
   });
-  msg.textContent = error ? 'E-posta veya şifre hatalı.' : '';
+  if (error) {
+    console.error('Supabase login error:', error);
+    msg.textContent = error.message === 'Invalid login credentials'
+      ? 'E-posta veya şifre hatalı.'
+      : 'Giriş yapılamadı: ' + error.message;
+  } else {
+    msg.textContent = '';
+  }
+});
+
+document.getElementById('forgotPasswordBtn').addEventListener('click', async () => {
+  const msg = document.getElementById('loginMessage');
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) {
+    msg.textContent = 'Önce e-posta adresini yaz.';
+    document.getElementById('loginEmail').focus();
+    return;
+  }
+
+  msg.textContent = 'Şifre yenileme bağlantısı gönderiliyor…';
+  const redirectTo = `${window.location.origin}${window.location.pathname}?recovery=1`;
+  const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
+
+  if (error) {
+    console.error('Supabase password reset error:', error);
+    msg.textContent = 'Bağlantı gönderilemedi: ' + error.message;
+  } else {
+    msg.textContent = 'Mailini kontrol et. Gelen YENİ bağlantıya tıkla.';
+  }
+});
+
+document.getElementById('recoveryForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = document.getElementById('recoveryMessage');
+  const password = document.getElementById('newPassword').value;
+  const again = document.getElementById('newPasswordAgain').value;
+
+  if (password.length < 8) {
+    msg.textContent = 'Şifre en az 8 karakter olmalı.';
+    return;
+  }
+  if (password !== again) {
+    msg.textContent = 'İki şifre aynı değil.';
+    return;
+  }
+
+  msg.textContent = 'Şifre değiştiriliyor…';
+  const { error } = await client.auth.updateUser({ password });
+  if (error) {
+    console.error('Supabase update password error:', error);
+    msg.textContent = 'Şifre değiştirilemedi: ' + error.message;
+    return;
+  }
+
+  history.replaceState({}, document.title, window.location.pathname);
+  msg.textContent = 'Şifre değiştirildi.';
+  showToast('Yeni şifren kaydedildi.');
+  setVisible(adminView);
+  await loadAll();
 });
 
 document.getElementById('logoutBtn').addEventListener('click', () => client.auth.signOut());
