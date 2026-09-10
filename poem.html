@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0c110d" />
+  <meta name="description" content="Çiftlik Filozofu şiir arşivi." />
+  <title>Şiir — Çiftlik Filozofu</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="reader-body" data-reader-kind="poem">
+  <div class="site-noise" aria-hidden="true"></div>
+  <div class="reading-progress" id="readingProgress" aria-hidden="true"></div>
+  <header class="site-header reader-header">
+    <a class="brand" href="/" aria-label="Çiftlik Filozofu ana sayfa">
+      <span class="brand-sigil">ÇF</span>
+      <span class="brand-type"><strong>Çiftlik Filozofu</strong><small>Sessizlikte doğan sözler</small></span>
+    </a>
+    <div></div>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Tema değiştir"><span class="theme-dot"></span><span id="themeText">Kâğıt</span></button>
+    </div>
+  </header>
+  <main class="reader-main">
+    <div class="reader-shell">
+      <aside class="reader-aside">
+        <a href="/#siirler">← Şiirlere dön</a>
+        <span id="readerDate"></span>
+      </aside>
+      <article class="reader-article">
+        <p class="reader-kicker" id="readerKicker">ŞİİR / ÇİFTLİK FİLOZOFU</p>
+        <h1 id="readerTitle">Yükleniyor…</h1>
+        <p class="reader-excerpt" id="readerExcerpt"></p>
+        <div class="reader-content" id="readerContent"></div>
+        <div class="reader-share">
+          <span class="reader-kicker">Birine bırakmak istersen</span>
+          <button id="copyLinkBtn" type="button">Bağlantıyı kopyala ↗</button>
+        </div>
+        <div class="reader-next" id="readerNext"></div>
+      </article>
+      <aside class="reader-mark">
+        <span>OKUMA NOTU</span>
+        <strong>Burada hiçbir dize acele etmiyor.</strong>
+      </aside>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="content.js"></script>
+  <script src="reader.js"></script>
+</body>
+</html>

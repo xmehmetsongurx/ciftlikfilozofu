@@ -1,202 +1,164 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#11150f" />
-  <meta name="description" content="Çiftlik Filozofu — şiirler, yazılar ve sessizlikte doğan sözler." />
-  <title>Çiftlik Filozofu — Sessizlikte Doğan Sözler</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f1eee6" />
+  <meta name="description" content="Çiftlik Filozofu — şiirler, yazılar ve sessizliğe bırakılmış cümleler." />
+  <title>Çiftlik Filozofu — Bir Gece Defteri</title>
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <div class="grain" aria-hidden="true"></div>
-  <div class="reading-progress" id="readingProgress" aria-hidden="true"></div>
-
-  <header class="site-header" id="top">
-    <a class="brand" href="#top" aria-label="Çiftlik Filozofu ana sayfa">
-      <span class="brand-mark">ÇF</span>
-      <span class="brand-copy">
-        <strong>Çiftlik Filozofu</strong>
-        <small>Sessizlikte doğan sözler</small>
-      </span>
+<header>
+  <div class="shell nav">
+    <a class="brand" href="#top">
+      <span class="monogram">CF</span>
+      <span class="brand-text"><strong>Çiftlik Filozofu</strong><span>Bir gece defteri</span></span>
     </a>
-
-    <button class="menu-toggle" id="menuToggle" aria-label="Menüyü aç" aria-expanded="false">
-      <span></span><span></span>
-    </button>
-
-    <nav class="site-nav" id="siteNav" aria-label="Ana menü">
-      <a href="#siirler">Şiirler</a>
-      <a href="#yazilar">Yazılar</a>
-      <a href="#sesli">Sesli Şiirler</a>
-      <a href="#hakkinda">Hakkında</a>
-      <a class="nav-cta" href="#iletisim">Bir söz bırak</a>
+    <nav>
+      <a href="#siirler">Şiirler</a><a href="#yazilar">Yazılar</a><a href="#dinle">Dinle</a><a href="#satirlar">Satırlar</a><a href="#hakkinda">Hakkında</a>
+      <a class="nav-cta" href="#iletisim">İletişim</a>
     </nav>
-  </header>
+    <button class="menu-btn" id="menuBtn" aria-label="Menü">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#siirler">Şiirler</a><a href="#yazilar">Yazılar</a><a href="#dinle">Dinle</a><a href="#satirlar">Satırlar</a><a href="#hakkinda">Hakkında</a><a href="#iletisim">İletişim</a>
+  </div>
+</header>
 
-  <main>
-    <section class="hero section-shell" aria-labelledby="heroTitle">
-      <div class="hero-copy reveal">
-        <p class="eyebrow">Şair · Gözlemci · Sessiz Düşünür</p>
-        <h1 id="heroTitle">Bazı sözler<br><em>sessizlikte</em><br>doğar.</h1>
-        <p class="hero-lede">Modern dünyanın gürültüsü içinde kaybolan insanlara; sade, samimi ve derin metinler.</p>
+<main id="top">
+  <section class="hero">
+    <div class="hero-left">
+      <div>
+        <div class="kicker gold" id="heroEyebrow">ŞAİR · GÖZLEMCİ · SESSİZ DÜŞÜNÜR</div>
+        <h1 class="hero-title"><span id="heroLine1">Hayat bazen</span><br><em id="heroEmphasis">bir cümlede</em><br><span id="heroLine3">yakalanır.</span></h1>
+        <p class="hero-copy" id="heroLede">Burada büyük laflar yok. Yarım kalmış düşünceler, gecenin bir yerinde akla düşen cümleler ve insanın kendine söyleyemediği şeyler var.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="#siirler">Şiirleri keşfet <span>↘</span></a>
-          <button class="text-button" id="randomWordBtn">Bugünün sözünü oku</button>
+          <a class="btn primary" href="#siirler">Defteri aç</a>
+          <button class="btn" id="randomPoem">Rastgele bir şiir</button>
         </div>
       </div>
-
-      <div class="hero-art reveal" aria-label="Gece, kır ve yalnız ağaçtan esinlenen soyut çizim">
-        <svg viewBox="0 0 720 820" role="img" aria-hidden="true">
-          <defs>
-            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#1a2219"/>
-              <stop offset="1" stop-color="#0d100c"/>
-            </linearGradient>
-            <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0" stop-color="#dfc892" stop-opacity=".34"/>
-              <stop offset="1" stop-color="#dfc892" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-          <rect width="720" height="820" rx="240" fill="url(#sky)"/>
-          <circle cx="490" cy="245" r="150" fill="url(#moonGlow)"/>
-          <circle cx="490" cy="245" r="66" fill="#d9c28f" opacity=".92"/>
-          <path d="M0 592 C150 542 274 560 375 596 C500 640 610 605 720 565 L720 820 L0 820Z" fill="#151c13"/>
-          <path d="M0 655 C124 620 236 635 350 672 C468 710 588 670 720 634 L720 820 L0 820Z" fill="#0a0d09"/>
-          <path d="M250 642 C267 545 282 447 304 345 C320 293 349 253 388 222" fill="none" stroke="#090b08" stroke-width="18" stroke-linecap="round"/>
-          <path d="M306 366 C240 324 212 270 199 215 M320 320 C386 309 425 270 449 218 M289 437 C235 405 195 400 156 406 M294 404 C354 384 403 393 448 424" fill="none" stroke="#090b08" stroke-width="12" stroke-linecap="round"/>
-          <g fill="#0a0d09">
-            <ellipse cx="190" cy="212" rx="50" ry="22" transform="rotate(30 190 212)"/>
-            <ellipse cx="221" cy="279" rx="53" ry="22" transform="rotate(25 221 279)"/>
-            <ellipse cx="447" cy="216" rx="55" ry="22" transform="rotate(-35 447 216)"/>
-            <ellipse cx="418" cy="284" rx="48" ry="19" transform="rotate(-16 418 284)"/>
-            <ellipse cx="160" cy="407" rx="50" ry="18" transform="rotate(8 160 407)"/>
-            <ellipse cx="448" cy="426" rx="52" ry="18" transform="rotate(12 448 426)"/>
-          </g>
-          <g stroke="#bda873" stroke-width="2" opacity=".7">
-            <path d="M370 320 v110"/><path d="M404 340 v94"/><path d="M232 351 v82"/>
-          </g>
-          <g fill="#d5c6a0">
-            <rect x="357" y="427" width="27" height="39" rx="2" transform="rotate(6 357 427)"/>
-            <rect x="393" y="431" width="25" height="35" rx="2" transform="rotate(-5 393 431)"/>
-            <rect x="220" y="429" width="25" height="35" rx="2" transform="rotate(5 220 429)"/>
-          </g>
-        </svg>
-        <div class="art-caption"><span>01</span><p>Biraz yavaşlamak için<br>bir yer.</p></div>
+      <div class="hero-foot">
+        <small>“Çiftlik Filozofu” bir karakter değil; hayatın kenarında durup olan biteni biraz daha dikkatli izleme biçimi.</small>
+        <span class="scroll-cue">Aşağı kaydır</span>
       </div>
+    </div>
 
-      <a class="scroll-cue" href="#siirler" aria-label="Aşağı kaydır">
-        <span>Aşağı kaydır</span><b>↓</b>
-      </a>
-    </section>
+    <div class="hero-right">
+      <div class="constellation"></div>
+      <article class="hero-card reveal">
+        <div class="card-no">DEFTER / 001</div>
+        <div class="hero-quote" id="heroQuote">İnsan bazen<br>en çok,<br><em>söylemediği</em><br>şeydir.</div>
+        <div class="card-note"><span>Gece notlarından<br>seçilmiş bir satır.</span><span>ÇF / 2026</span></div>
+      </article>
+    </div>
+  </section>
 
-    <section class="quote-band reveal" aria-label="Günün sözü">
-      <p class="quote-index">Günün sözü</p>
-      <blockquote id="dailyQuote">“İnsan bazen kendini en çok, kimseye anlatmadığı yerde bulur.”</blockquote>
-      <button class="quote-refresh" id="quoteRefresh" aria-label="Başka bir söz göster">↻</button>
-    </section>
-
-    <section class="content-section section-shell" id="siirler">
-      <div class="section-heading reveal">
-        <div>
-          <p class="eyebrow">01 · Şiirler</p>
-          <h2>İçinde biraz<br><em>sessizlik</em> taşıyanlar.</h2>
-        </div>
-        <p>Bir çocuğun bakışı, eski bir sokağın kokusu, bir vedanın geride bıraktığı ses… Şiirler burada acele etmeden okunur.</p>
+  <section class="section" id="siirler">
+    <div class="shell">
+      <div class="section-head reveal">
+        <div class="kicker">01 / Şiirler</div>
+        <h2>Biraz <span class="gold">içeride</span> kalanlar.</h2>
+        <p>Şiirler burada bir içerik listesi değil; defterin ayrı ayrı açılan sayfaları.</p>
       </div>
+      <div class="poems-grid" id="poemGrid"></div>
+    </div>
+  </section>
 
-      <div class="filter-row reveal" role="group" aria-label="Şiir kategorileri">
-        <button class="filter-chip active" data-filter="all">Tümü</button>
-        <button class="filter-chip" data-filter="yalnizlik">Yalnızlık</button>
-        <button class="filter-chip" data-filter="insan">İnsan</button>
-        <button class="filter-chip" data-filter="cocukluk">Çocukluk</button>
-        <button class="filter-chip" data-filter="eski-zamanlar">Eski Zamanlar</button>
-        <button class="filter-chip" data-filter="hayat">Hayat</button>
-      </div>
-
-      <div class="poem-grid" id="poemGrid"></div>
-
-      <div class="section-footer reveal">
-        <button class="button button-ghost" id="showAllPoems">Bütün şiirleri göster <span>→</span></button>
-      </div>
-    </section>
-
-    <section class="content-section writings section-shell" id="yazilar">
-      <div class="section-heading split-heading reveal">
-        <div>
-          <p class="eyebrow">02 · Yazılar</p>
-          <h2>Hayata kenardan<br>bakınca görünenler.</h2>
-        </div>
-        <p>Gündelik hayatın içinde gözden kaçan küçük şeyler. Bazen bir düşünce, bazen bir anı, bazen yalnızca insanın kendine söylediği bir cümle.</p>
+  <section class="writings" id="yazilar">
+    <div class="shell">
+      <div class="section-head reveal">
+        <div class="kicker">02 / Yazılar</div>
+        <h2>Şiire sığmayan<br><span class="gold">düşünceler.</span></h2>
+        <p>Bazen bir cümle yetmez. İnsan biraz daha uzun konuşmak ister.</p>
       </div>
       <div class="writing-list" id="writingList"></div>
-    </section>
+    </div>
+  </section>
 
-    <section class="audio-section" id="sesli">
-      <div class="section-shell audio-shell">
-        <div class="audio-intro reveal">
-          <p class="eyebrow">03 · Sesli Şiirler</p>
-          <h2>Bazı şiirler<br><em>okunmaz, duyulur.</em></h2>
-          <p>Kelimelerin arasındaki sessizliği de duymak isteyenler için.</p>
-        </div>
-        <div class="player-card reveal">
-          <div class="player-topline"><span>Şimdi dinle</span><span id="playerTime">00:00 / 01:18</span></div>
-          <div class="player-title">
-            <button class="play-button" id="playButton" aria-label="Örnek sesi oynat">▶</button>
-            <div><strong>Sessizliğin Kıyısında</strong><small>Çiftlik Filozofu · Sesli Şiir</small></div>
+  <section class="night-section" id="dinle">
+    <div class="shell">
+      <div class="section-head reveal">
+        <div class="kicker">03 / Ses</div>
+        <h2>Bir şiir bazen<br>okunmaz, <span class="gold">duyulur.</span></h2>
+        <p>Gece açılan eski bir radyo gibi: birkaç dakika, bir ses ve geriye kalan sessizlik.</p>
+      </div>
+      <div class="featured">
+        <div class="vinyl reveal"></div>
+        <div class="audio-copy reveal">
+          <div class="kicker gold">Bu gecenin kaydı</div>
+          <h3 id="audioTitle">Geç Kalmış<br>Bir Cümle</h3>
+          <p id="audioSubtitle">Çiftlik Filozofu · Sesli Şiir</p>
+          <div class="player" id="playerCard">
+            <button class="play" id="playBtn" aria-label="Oynat">▶</button>
+            <div class="progress"><span id="progressBar" style="width:0%"></span></div>
+            <div class="time"><span id="audioCurrent">00:00</span> / <span id="audioDuration">00:00</span></div>
           </div>
-          <div class="waveform" id="waveform" aria-hidden="true"></div>
-          <p class="player-note">Bu alan mevcut ses kayıtların bağlandığında gerçek oynatıcı olarak çalışacak.</p>
+          <div class="audio-empty" id="audioEmpty" hidden>Ses kaydı admin panelinden eklendiğinde burada çalacak.</div>
+          <audio id="audioElement" preload="metadata"></audio>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="about-section section-shell" id="hakkinda">
-      <div class="about-number reveal">04</div>
-      <div class="about-quote reveal">
-        <p>Ben filozof değilim.</p>
-        <p>Sadece hayatı dikkatle</p>
-        <p><em>izleyen biriyim.</em></p>
+  <section class="lines" id="satirlar">
+    <div class="shell lines-wrap">
+      <div class="reveal">
+        <div class="kicker">04 / Bir Satır</div>
+        <p class="muted" style="line-height:1.7;margin-top:24px;max-width:320px">Uzun uzun okumak istemediğin günler için, defterden tek bir cümle.</p>
+      </div>
+      <div class="quote-machine reveal">
+        <blockquote id="quoteText">“İnsan bazen kendini, en çok sustuğu yerde ele verir.”</blockquote>
+        <footer><span class="kicker">Çiftlik Filozofu</span><button class="random" id="newQuote">Başka bir satır ↻</button></footer>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="hakkinda">
+    <div class="shell about-grid">
+      <div class="reveal">
+        <div class="kicker gold" id="aboutLabel">05 / Hakkında</div>
+        <h2 class="about-title"><span id="aboutLine1">Ben filozof<br>değilim.</span><br><em id="aboutEmphasis">Sadece<br>bakıyorum.</em></h2>
       </div>
       <div class="about-copy reveal">
-        <p>Çocukluğumdan beri insanları, sokakları ve sessiz anları gözlemlemeyi sevdim. Bazı anların, bazı sözlerin ve bazı insanların zamanla kaybolup gittiğini fark ettim. Belki de yazmaya biraz bu yüzden başladım.</p>
-        <p>Yazmaya başladığımda büyük bir amacım yoktu. Sadece içimde birikenleri, unutulmasını istemediğim duyguları ve hayatın arasına saklanan küçük ayrıntıları bir yere bırakmak istedim.</p>
-        <p>Şiir benim için biraz hatırlamak, biraz anlamaya çalışmak, biraz da söyleyemediklerimi kelimelere emanet etmektir.</p>
-        <div class="signature">Çiftlik Filozofu</div>
+        <p id="aboutP1"></p><p id="aboutP2"></p><p id="aboutP3"></p>
+        <div class="signature">— Çiftlik Filozofu</div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="contact-section" id="iletisim">
-      <div class="section-shell contact-shell reveal">
-        <p class="eyebrow">05 · İletişim</p>
-        <h2>Bir söz içinizde<br>kaldıysa — <em>yazın.</em></h2>
-        <div class="contact-links">
-          <a href="mailto:merhaba@ciftlikfilozofu.com">E-posta <span>↗</span></a>
-          <a href="https://www.instagram.com/ciftlikfilozofu/" target="_blank" rel="noopener noreferrer">Instagram <span>↗</span></a>
+  <section class="leave" id="iletisim">
+    <div class="shell leave-grid">
+      <div class="reveal">
+        <div class="kicker gold">06 / İletişim</div>
+        <h2>Bir cümle<br>bırakmak istersen.</h2>
+        <p>Bir şiir, bir düşünce ya da sadece selam. Bazen konuşmanın başlaması için tek bir cümle yeter.</p>
+      </div>
+      <div class="note-form reveal">
+        <textarea id="messageText" maxlength="500" placeholder="Söylemek istediğin bir şey..."></textarea>
+        <div class="note-actions">
+          <small>Mesajın e-posta uygulaman üzerinden gönderilir. Sitede herkese açık paylaşılmaz.</small>
+          <button class="send" id="sendMessage" type="button">Gönder →</button>
+        </div>
+        <div style="margin-top:28px;display:flex;gap:24px;flex-wrap:wrap;font-size:12px">
+          <a id="emailLink" href="#">E-posta ↗</a>
+          <a id="instagramLink" href="#" target="_blank" rel="noopener">Instagram ↗</a>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
+</main>
 
-  <footer class="site-footer section-shell">
-    <div class="footer-brand"><span class="brand-mark">ÇF</span><strong>Çiftlik Filozofu</strong></div>
-    <p>© 2026 Çiftlik Filozofu</p>
-    <a href="#top">Yukarı dön ↑</a>
-  </footer>
+<footer class="site-footer">
+  <div class="shell footer-row">
+    <span>© 2026 Çiftlik Filozofu · Sessizliğe bırakılmış sözler.</span>
+    <span><a href="/admin.html">Yönetim</a> · <a href="#top">Başa dön ↑</a></span>
+  </div>
+</footer>
 
-  <dialog class="content-modal" id="contentModal">
-    <button class="modal-close" id="modalClose" aria-label="Kapat">×</button>
-    <div class="modal-meta" id="modalMeta"></div>
-    <h3 id="modalTitle"></h3>
-    <div class="modal-body" id="modalBody"></div>
-  </dialog>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
-  <script src="content.js"></script>
-  <script src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-config.js"></script>
+<script src="/content.js"></script>
+<script src="/app.js"></script>
 </body>
 </html>

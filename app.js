@@ -1,221 +1,126 @@
-let quotes = [...(window.CF_CONTENT?.quotes || [])];
-let poems = [...(window.CF_CONTENT?.poems || [])];
-let writings = [...(window.CF_CONTENT?.writings || [])];
-let cfClient = null;
+const F = window.CF_FALLBACK || {settings:{},quotes:[],poems:[],writings:[],audio:[]};
+let settings={...(F.settings||{})}, quotes=[...(F.quotes||[])], poems=[...(F.poems||[])], writings=[...(F.writings||[])], audio=[...(F.audio||[])];
+let client=null;
+const $=(s,r=document)=>r.querySelector(s);
+const esc=(v='')=>String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const label=(v='')=>({gece:'Gece',hayat:'Hayat',insan:'İnsan',hatira:'Hatıra',yalnizlik:'Yalnızlık',cocukluk:'Çocukluk','eski-zamanlar':'Eski Zamanlar'}[v]||v||'Şiir');
+const dateLabel=v=>{if(!v)return'';const d=new Date(String(v).slice(0,10)+'T12:00:00');return isNaN(d)?v:new Intl.DateTimeFormat('tr-TR',{month:'long',year:'numeric'}).format(d)};
+const poemUrl=p=>`/siir/${encodeURIComponent(p.slug||p.id)}`;
+const writingUrl=w=>`/yazi/${encodeURIComponent(w.slug||w.id)}`;
 
-const poemGrid = document.getElementById('poemGrid');
-const writingList = document.getElementById('writingList');
-const modal = document.getElementById('contentModal');
-const modalTitle = document.getElementById('modalTitle');
-const modalMeta = document.getElementById('modalMeta');
-const modalBody = document.getElementById('modalBody');
-const modalClose = document.getElementById('modalClose');
-const dailyQuote = document.getElementById('dailyQuote');
-const menuToggle = document.getElementById('menuToggle');
-const siteNav = document.getElementById('siteNav');
-
-function formatDate(dateValue) {
-  if (!dateValue) return '';
-  const date = new Date(`${dateValue}T12:00:00`);
-  if (Number.isNaN(date.getTime())) return dateValue;
-  return new Intl.DateTimeFormat('tr-TR', { month: 'long', year: 'numeric' }).format(date);
-}
-
-function categoryLabel(category = '') {
-  const map = {
-    'yalnizlik': 'Yalnızlık',
-    'insan': 'İnsan',
-    'cocukluk': 'Çocukluk',
-    'eski-zamanlar': 'Eski Zamanlar',
-    'hayat': 'Hayat'
-  };
-  return map[category] || category || 'Şiir';
-}
-
-async function loadPublishedContent() {
-  if (!window.CF_HAS_SUPABASE || !window.supabase?.createClient) return;
-
-  try {
-    cfClient = window.supabase.createClient(window.CF_SUPABASE.url, window.CF_SUPABASE.key);
-
-    const [poemRes, writingRes] = await Promise.all([
-      cfClient.from('poems')
-        .select('id,title,category,excerpt,body,published_at,featured,created_at')
-        .eq('status', 'published')
-        .order('featured', { ascending: false })
-        .order('published_at', { ascending: false, nullsFirst: false }),
-      cfClient.from('writings')
-        .select('id,title,category,excerpt,body,published_at,featured,created_at')
-        .eq('status', 'published')
-        .order('featured', { ascending: false })
-        .order('published_at', { ascending: false, nullsFirst: false })
+async function load(){
+  if(!window.CF_SUPABASE?.url||!window.CF_SUPABASE?.key||!window.supabase?.createClient)return;
+  try{
+    client=window.supabase.createClient(window.CF_SUPABASE.url,window.CF_SUPABASE.key);
+    const [pr,wr,qr,sr,ar]=await Promise.all([
+      client.from('poems').select('*').eq('status','published').order('featured',{ascending:false}).order('published_at',{ascending:false,nullsFirst:false}),
+      client.from('writings').select('*').eq('status','published').order('featured',{ascending:false}).order('published_at',{ascending:false,nullsFirst:false}),
+      client.from('quotes').select('*').eq('status','published').order('sort_order',{ascending:true}).order('created_at',{ascending:false}),
+      client.from('site_settings').select('*').eq('id',1).maybeSingle(),
+      client.from('audio_poems').select('*').eq('status','published').order('featured',{ascending:false}).order('created_at',{ascending:false})
     ]);
-
-    if (poemRes.error) throw poemRes.error;
-    if (writingRes.error) throw writingRes.error;
-
-    poems = (poemRes.data || []).map(p => ({
-      ...p,
-      categoryLabel: categoryLabel(p.category),
-      date: formatDate(p.published_at || p.created_at),
-      excerpt: p.excerpt || (p.body || '').replace(/\s+/g, ' ').slice(0, 120) + '…'
-    }));
-
-    writings = (writingRes.data || []).map(w => ({
-      ...w,
-      category: categoryLabel(w.category),
-      date: formatDate(w.published_at || w.created_at)
-    }));
-  } catch (err) {
-    console.warn('Supabase içeriği alınamadı; yerel örnek içerik gösteriliyor.', err);
-  }
+    if(!pr.error&&pr.data?.length)poems=pr.data;
+    if(!wr.error&&wr.data?.length)writings=wr.data;
+    if(!qr.error&&qr.data?.length)quotes=qr.data;
+    if(!sr.error&&sr.data)settings={...settings,...sr.data};
+    if(!ar.error&&ar.data?.length)audio=ar.data;
+  }catch(e){console.warn('Supabase yüklenemedi, yedek içerik gösteriliyor.',e)}
 }
 
-function renderPoems(filter = 'all') {
-  const visible = filter === 'all' ? poems : poems.filter(p => p.category === filter);
-  if (!visible.length) {
-    poemGrid.innerHTML = '<div class="empty-state">Bu kategoride henüz yayımlanmış bir şiir yok.</div>';
-    return;
-  }
-
-  poemGrid.innerHTML = visible.map((p, i) => `
-    <article class="poem-card reveal visible" data-kind="poem" data-id="${p.id}" tabindex="0">
-      <span class="card-index">${String(i + 1).padStart(2, '0')}</span>
-      <h3>${escapeHtml(p.title)}</h3>
-      <p>“${escapeHtml(p.excerpt || '')}”</p>
-      <div class="card-footer"><span>${escapeHtml(p.categoryLabel || categoryLabel(p.category))}</span><span>${escapeHtml(p.date || '')}</span></div>
-    </article>
-  `).join('');
-  bindContentCards();
+function setText(id,value){const el=$(id);if(el&&value)el.textContent=value}
+function applySettings(){
+  setText('#heroEyebrow',settings.hero_eyebrow);
+  setText('#heroLine1',settings.hero_line1);
+  setText('#heroEmphasis',settings.hero_emphasis);
+  setText('#heroLine3',settings.hero_line3);
+  setText('#heroLede',settings.hero_lede);
+  setText('#aboutLabel',settings.about_label);
+  if($('#aboutLine1')&&settings.about_line1) $('#aboutLine1').innerHTML=esc(settings.about_line1).replace(/\n/g,'<br>');
+  if($('#aboutEmphasis')&&settings.about_emphasis) $('#aboutEmphasis').innerHTML=esc(settings.about_emphasis).replace(/\n/g,'<br>');
+  setText('#aboutP1',settings.about_p1); setText('#aboutP2',settings.about_p2); setText('#aboutP3',settings.about_p3);
+  if(settings.email) $('#emailLink').href=`mailto:${settings.email}`;
+  if(settings.instagram) $('#instagramLink').href=settings.instagram;
 }
 
-function renderWritings() {
-  if (!writings.length) {
-    writingList.innerHTML = '<div class="empty-state">Henüz yayımlanmış bir yazı yok.</div>';
-    return;
-  }
+function renderPoems(){
+  const grid=$('#poemGrid');
+  if(!poems.length){grid.innerHTML='<div class="empty-state">Henüz yayımlanmış bir şiir yok.</div>';return}
+  grid.innerHTML=poems.slice(0,8).map((p,i)=>`
+    <article class="poem reveal">
+      <div class="poem-meta"><span>${esc(label(p.category))}</span><span>${esc(dateLabel(p.published_at||p.created_at))}</span></div>
+      <h3>${esc(p.title)}</h3>
+      <p>${esc(p.excerpt||String(p.body||'').replace(/\s+/g,' ').slice(0,150)+'…')}</p>
+      <a class="poem-open btn" href="${poemUrl(p)}">Oku</a>
+      <span class="index">${String(i+1).padStart(2,'0')}</span>
+    </article>`).join('');
+}
 
-  writingList.innerHTML = writings.map((w, i) => `
-    <article class="writing-item reveal" data-kind="writing" data-id="${w.id}" tabindex="0">
-      <span class="num">${String(i + 1).padStart(2, '0')}</span>
-      <span class="category">${escapeHtml(w.category || '')}</span>
-      <h3>${escapeHtml(w.title)}</h3>
+function renderWritings(){
+  const el=$('#writingList');
+  if(!writings.length){el.innerHTML='<div class="empty-state">Henüz yayımlanmış bir yazı yok.</div>';return}
+  el.innerHTML=writings.slice(0,6).map((w,i)=>`
+    <a class="writing-row reveal" href="${writingUrl(w)}">
+      <span class="num">${String(i+1).padStart(2,'0')}</span>
+      <h3>${esc(w.title)}</h3>
+      <p>${esc(w.excerpt||String(w.body||'').replace(/\s+/g,' ').slice(0,180)+'…')}</p>
       <span class="arrow">↗</span>
-    </article>
-  `).join('');
-  bindContentCards();
-  observeReveals();
+    </a>`).join('');
 }
 
-function escapeHtml(value = '') {
-  return String(value).replace(/[&<>'"]/g, c => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-  }[c]));
+function setQuote(q){
+  if(!q)return;
+  $('#quoteText').textContent=`“${q.text||q}”`;
 }
-
-function openContent(kind, rawId) {
-  const id = String(rawId);
-  const item = kind === 'poem'
-    ? poems.find(p => String(p.id) === id)
-    : writings.find(w => String(w.id) === id);
-  if (!item) return;
-  modalMeta.textContent = `${kind === 'poem' ? (item.categoryLabel || categoryLabel(item.category)) : item.category} · ${item.date || ''}`;
-  modalTitle.textContent = item.title;
-  modalBody.textContent = item.body;
-  modal.showModal();
-  document.body.classList.add('modal-open');
+function dailyQuote(){
+  if(!quotes.length)return;
+  const k=new Date().toISOString().slice(0,10).split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  setQuote(quotes[k%quotes.length]);
 }
+function randomQuote(){
+  if(!quotes.length)return;
+  setQuote(quotes[Math.floor(Math.random()*quotes.length)]);
+}
+function setupAudio(){
+  const item=audio.find(x=>x.featured)||audio[0];
+  if(!item)return;
+  setText('#audioTitle',item.title||'Sesli Şiir');
+  setText('#audioSubtitle',item.subtitle||'Çiftlik Filozofu · Sesli Şiir');
+  setText('#audioDuration',item.duration_label||'00:00');
+  const a=$('#audioElement');
+  if(!item.audio_url){$('#audioEmpty').hidden=false;return}
+  a.src=item.audio_url;
+  a.addEventListener('loadedmetadata',()=>{if(isFinite(a.duration))setText('#audioDuration',time(a.duration))});
+  a.addEventListener('timeupdate',()=>{
+    setText('#audioCurrent',time(a.currentTime));
+    $('#progressBar').style.width=(a.duration?(a.currentTime/a.duration)*100:0)+'%';
+  });
+  a.addEventListener('ended',()=>$('#playBtn').textContent='▶');
+}
+function time(s=0){s=Math.max(0,Math.floor(s));return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
 
-function bindContentCards() {
-  document.querySelectorAll('[data-kind][data-id]').forEach(el => {
-    el.onclick = () => openContent(el.dataset.kind, el.dataset.id);
-    el.onkeydown = e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        openContent(el.dataset.kind, el.dataset.id);
-      }
-    };
+function interactions(){
+  $('#newQuote')?.addEventListener('click',randomQuote);
+  $('#randomPoem')?.addEventListener('click',()=>{
+    if(!poems.length)return;
+    location.href=poemUrl(poems[Math.floor(Math.random()*poems.length)]);
+  });
+  $('#playBtn')?.addEventListener('click',async()=>{
+    const a=$('#audioElement'); if(!a?.src)return;
+    if(a.paused){try{await a.play();$('#playBtn').textContent='❚❚'}catch{}}
+    else{a.pause();$('#playBtn').textContent='▶'}
+  });
+  $('#menuBtn')?.addEventListener('click',()=>$('#mobileNav').classList.toggle('open'));
+  document.querySelectorAll('#mobileNav a').forEach(a=>a.addEventListener('click',()=>$('#mobileNav').classList.remove('open')));
+  $('#sendMessage')?.addEventListener('click',()=>{
+    const text=$('#messageText').value.trim();
+    const mail=settings.email||'';
+    if(!mail)return;
+    location.href=`mailto:${mail}?subject=${encodeURIComponent('Çiftlik Filozofu sitesinden mesaj')}&body=${encodeURIComponent(text)}`;
   });
 }
 
-function changeQuote() {
-  if (!quotes.length) return;
-  let next = quotes[Math.floor(Math.random() * quotes.length)];
-  if (`“${next}”` === dailyQuote.textContent && quotes.length > 1) return changeQuote();
-  dailyQuote.animate([{opacity: 0, transform:'translateY(8px)'},{opacity: 1, transform:'none'}], {duration: 420, easing:'ease'});
-  dailyQuote.textContent = `“${next}”`;
+function reveal(){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 }
-
-document.querySelectorAll('.filter-chip').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderPoems(btn.dataset.filter);
-  });
-});
-
-document.getElementById('showAllPoems').addEventListener('click', () => {
-  document.querySelector('.filter-chip[data-filter="all"]').click();
-  document.getElementById('siirler').scrollIntoView({behavior:'smooth'});
-});
-
-document.getElementById('quoteRefresh').addEventListener('click', changeQuote);
-document.getElementById('randomWordBtn').addEventListener('click', () => {
-  changeQuote();
-  document.querySelector('.quote-band').scrollIntoView({behavior:'smooth', block:'center'});
-});
-
-modalClose.addEventListener('click', () => modal.close());
-modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
-modal.addEventListener('close', () => document.body.classList.remove('modal-open'));
-
-menuToggle.addEventListener('click', () => {
-  const open = siteNav.classList.toggle('open');
-  menuToggle.setAttribute('aria-expanded', String(open));
-});
-siteNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-  siteNav.classList.remove('open');
-  menuToggle.setAttribute('aria-expanded', 'false');
-}));
-
-const playerCard = document.querySelector('.player-card');
-const playButton = document.getElementById('playButton');
-const waveform = document.getElementById('waveform');
-for (let i = 0; i < 86; i++) {
-  const bar = document.createElement('span');
-  const h = 10 + ((i * 17) % 38);
-  bar.style.height = `${h}px`;
-  waveform.appendChild(bar);
-}
-let playing = false;
-playButton.addEventListener('click', () => {
-  playing = !playing;
-  playerCard.classList.toggle('playing', playing);
-  playButton.textContent = playing ? 'Ⅱ' : '▶';
-});
-
-function observeReveals() {
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: .12 });
-  document.querySelectorAll('.reveal:not(.visible)').forEach(el => observer.observe(el));
-}
-
-window.addEventListener('scroll', () => {
-  document.querySelector('.site-header').classList.toggle('scrolled', window.scrollY > 18);
-  const max = document.documentElement.scrollHeight - window.innerHeight;
-  const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
-  document.getElementById('readingProgress').style.width = `${pct}%`;
-});
-
-(async function init() {
-  await loadPublishedContent();
-  renderPoems();
-  renderWritings();
-  observeReveals();
-})();
+(async()=>{await load();applySettings();renderPoems();renderWritings();dailyQuote();setupAudio();interactions();requestAnimationFrame(reveal)})();

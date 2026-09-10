@@ -3,179 +3,202 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#11150f" />
+  <meta name="theme-color" content="#0d120e" />
   <meta name="robots" content="noindex,nofollow" />
   <title>Çiftlik Filozofu — Yönetim</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin.css" />
 </head>
 <body>
-  <div class="grain" aria-hidden="true"></div>
-
   <main id="setupView" class="center-view hidden">
-    <section class="auth-card setup-card">
-      <div class="monogram">ÇF</div>
-      <p class="eyebrow">İlk kurulum</p>
-      <h1>Panel hazır.<br><em>Supabase bağlantısı eksik.</em></h1>
-      <p>Önce <code>supabase-setup.sql</code> dosyasını Supabase SQL Editor'de çalıştır, ardından <code>supabase-config.js</code> içine Project URL ve publishable key değerlerini yaz.</p>
-      <div class="setup-steps">
-        <span><b>01</b> SQL'i çalıştır</span>
-        <span><b>02</b> Admin kullanıcını oluştur</span>
-        <span><b>03</b> URL + key'i ekle</span>
-      </div>
-      <a class="button primary" href="index.html">Siteyi görüntüle</a>
+    <section class="auth-card">
+      <div class="auth-mark">ÇF</div>
+      <p class="eyebrow">İLK KURULUM</p>
+      <h1>Supabase bağlantısı bulunamadı.</h1>
+      <p>Mevcut GitHub reponuzdaki <code>supabase-config.js</code> dosyasını koruyun. Yeni kurulum yapıyorsanız örnek dosyayı kopyalayıp Project URL ve Publishable Key bilgilerini girin.</p>
     </section>
   </main>
 
   <main id="loginView" class="center-view hidden">
     <section class="auth-card">
-      <div class="monogram">ÇF</div>
-      <p class="eyebrow">Yönetim Paneli</p>
-      <h1>Tekrar<br><em>hoş geldin.</em></h1>
+      <div class="auth-mark">ÇF</div>
+      <p class="eyebrow">YÖNETİM PANELİ</p>
+      <h1>Tekrar hoş geldin.</h1>
+      <p>Şiirler, yazılar ve sitenin sesi burada yönetilir.</p>
       <form id="loginForm" class="stack-form">
-        <label>E-posta<input id="loginEmail" type="email" autocomplete="username" required placeholder="mail@adresin.com"></label>
-        <label>Şifre<input id="loginPassword" type="password" autocomplete="current-password" required placeholder="••••••••"></label>
-        <button class="button primary" type="submit">Giriş yap <span>→</span></button>
+        <label>E-posta<input id="loginEmail" type="email" autocomplete="username" required /></label>
+        <label>Şifre<input id="loginPassword" type="password" autocomplete="current-password" required /></label>
+        <button class="button primary" type="submit">Giriş yap</button>
         <button class="button ghost" type="button" id="forgotPasswordBtn">Şifremi unuttum</button>
         <p class="form-message" id="loginMessage" aria-live="polite"></p>
       </form>
-      <a class="back-link" href="index.html">← Siteye dön</a>
     </section>
   </main>
 
   <main id="recoveryView" class="center-view hidden">
     <section class="auth-card">
-      <div class="monogram">ÇF</div>
-      <p class="eyebrow">Şifre yenileme</p>
-      <h1>Yeni şifreni<br><em>belirle.</em></h1>
-      <p>Yeni şifreni iki kez yaz. Kaydettiğinde yönetim panelin açılacak.</p>
+      <div class="auth-mark">ÇF</div>
+      <p class="eyebrow">ŞİFRE YENİLEME</p>
+      <h1>Yeni şifreni belirle.</h1>
+      <p>En az 8 karakter kullan. Bu işlemden sonra panel açılacak.</p>
       <form id="recoveryForm" class="stack-form">
-        <label>Yeni şifre<input id="newPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="En az 8 karakter"></label>
-        <label>Yeni şifre tekrar<input id="newPasswordAgain" type="password" autocomplete="new-password" minlength="8" required placeholder="Şifreni tekrar yaz"></label>
-        <button class="button primary" type="submit">Şifreyi kaydet <span>→</span></button>
+        <label>Yeni şifre<input id="newPassword" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <label>Yeni şifre tekrar<input id="newPasswordAgain" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <button class="button primary" type="submit">Şifreyi kaydet</button>
         <p class="form-message" id="recoveryMessage" aria-live="polite"></p>
       </form>
     </section>
   </main>
 
-  <div id="adminView" class="admin-shell hidden">
+  <main id="adminView" class="admin-shell hidden">
     <aside class="sidebar">
-      <a class="side-brand" href="index.html">
-        <span class="monogram small">ÇF</span>
-        <span><strong>Çiftlik Filozofu</strong><small>Yönetim</small></span>
+      <a href="/" class="admin-brand">
+        <span>ÇF</span>
+        <div><strong>Çiftlik Filozofu</strong><small>Yönetim</small></div>
       </a>
-
-      <nav class="side-nav">
-        <button class="nav-item active" data-section="dashboard"><span>◌</span> Genel Bakış</button>
+      <nav class="admin-nav">
+        <button class="nav-item active" data-section="dashboard"><span>⌂</span> Genel bakış</button>
         <button class="nav-item" data-section="poems"><span>✦</span> Şiirler</button>
         <button class="nav-item" data-section="writings"><span>≋</span> Yazılar</button>
+        <button class="nav-item" data-section="quotes"><span>“</span> Sözler</button>
+        <button class="nav-item" data-section="audio"><span>◉</span> Sesli şiirler</button>
+        <button class="nav-item" data-section="settings"><span>⚙</span> Site ayarları</button>
       </nav>
-
-      <div class="side-bottom">
-        <a href="index.html" target="_blank">Siteyi aç ↗</a>
-        <button id="logoutBtn">Çıkış yap</button>
+      <div class="sidebar-footer">
+        <a href="/" target="_blank" rel="noopener">Siteyi aç ↗</a>
+        <button id="logoutBtn" type="button">Çıkış yap</button>
       </div>
     </aside>
 
     <section class="workspace">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow" id="pageEyebrow">Yönetim</p>
-          <h2 id="pageTitle">Genel Bakış</h2>
-        </div>
-        <button class="button primary" id="newContentBtn">+ Yeni şiir</button>
+      <header class="workspace-header">
+        <div><p class="eyebrow" id="pageEyebrow">YÖNETİM</p><h1 id="pageTitle">Genel Bakış</h1></div>
+        <button class="button primary" id="newContentBtn" type="button">+ Yeni şiir</button>
       </header>
 
-      <div id="dashboardSection" class="panel-section">
-        <div class="welcome-card">
-          <span>Bugün</span>
-          <h3>Kelimelerini<br><em>yerine bırak.</em></h3>
-          <p>Buradan yayımladığın içerikler ana sitede otomatik görünür. Taslak içerikleri yalnızca sen görürsün.</p>
-        </div>
-
+      <section class="panel-section" id="dashboardSection">
         <div class="stats-grid">
-          <article><span>Toplam şiir</span><strong id="statPoems">0</strong></article>
-          <article><span>Yayında</span><strong id="statPublished">0</strong></article>
-          <article><span>Taslak</span><strong id="statDrafts">0</strong></article>
-          <article><span>Yazılar</span><strong id="statWritings">0</strong></article>
+          <article><small>Toplam şiir</small><strong id="statPoems">0</strong></article>
+          <article><small>Yayındaki şiir</small><strong id="statPublished">0</strong></article>
+          <article><small>Taslak</small><strong id="statDrafts">0</strong></article>
+          <article><small>Yazı</small><strong id="statWritings">0</strong></article>
+          <article><small>Söz</small><strong id="statQuotes">0</strong></article>
+          <article><small>Ses kaydı</small><strong id="statAudio">0</strong></article>
         </div>
-
-        <div class="section-block">
-          <div class="block-heading"><div><p class="eyebrow">Son eklenenler</p><h3>En yeni içerikler</h3></div></div>
-          <div id="recentList" class="content-list"></div>
+        <div class="panel-card">
+          <div class="panel-card-head"><div><p class="eyebrow">SON HAREKETLER</p><h2>Yeni eklenenler</h2></div></div>
+          <div class="content-list" id="recentList"></div>
         </div>
-      </div>
+      </section>
 
-      <div id="poemsSection" class="panel-section hidden">
-        <div class="list-toolbar">
-          <input id="poemSearch" type="search" placeholder="Şiirlerde ara…">
+      <section class="panel-section hidden" id="poemsSection">
+        <div class="toolbar">
+          <label class="search-box">⌕ <input id="poemSearchAdmin" type="search" placeholder="Şiir ara…" /></label>
           <select id="poemStatusFilter"><option value="all">Tüm durumlar</option><option value="published">Yayında</option><option value="draft">Taslak</option></select>
         </div>
-        <div id="poemList" class="content-list"></div>
-      </div>
+        <div class="content-list" id="poemListAdmin"></div>
+      </section>
 
-      <div id="writingsSection" class="panel-section hidden">
-        <div class="list-toolbar"><input id="writingSearch" type="search" placeholder="Yazılarda ara…"></div>
-        <div id="writingListAdmin" class="content-list"></div>
-      </div>
+      <section class="panel-section hidden" id="writingsSection">
+        <div class="toolbar"><label class="search-box">⌕ <input id="writingSearchAdmin" type="search" placeholder="Yazı ara…" /></label></div>
+        <div class="content-list" id="writingListAdmin"></div>
+      </section>
+
+      <section class="panel-section hidden" id="quotesSection">
+        <div class="panel-card">
+          <div class="panel-card-head"><div><p class="eyebrow">GÜNÜN SÖZÜ HAVUZU</p><h2>Sözler</h2></div><button class="button primary" id="newQuoteBtn" type="button">+ Yeni söz</button></div>
+          <div class="content-list" id="quoteListAdmin"></div>
+        </div>
+      </section>
+
+      <section class="panel-section hidden" id="audioSection">
+        <div class="panel-card">
+          <div class="panel-card-head"><div><p class="eyebrow">SES ARŞİVİ</p><h2>Sesli şiirler</h2></div><button class="button primary" id="newAudioBtn" type="button">+ Ses kaydı</button></div>
+          <div class="content-list" id="audioListAdmin"></div>
+        </div>
+      </section>
+
+      <section class="panel-section hidden" id="settingsSection">
+        <form id="settingsForm" class="settings-form">
+          <div class="settings-intro"><p class="eyebrow">SİTE AYARLARI</p><h2>GitHub'a girmeden metinleri değiştir.</h2><p>Ana sayfa, Hakkında ve iletişim metinleri burada tutulur.</p></div>
+          <div class="settings-grid">
+            <div class="settings-group">
+              <h3>Ana ekran</h3>
+              <label>Üst etiket<input id="setHeroEyebrow" /></label>
+              <label>1. satır<input id="setHeroLine1" /></label>
+              <label>Vurgulu satır<input id="setHeroEmphasis" /></label>
+              <label>3. satır<input id="setHeroLine3" /></label>
+              <label>Açıklama<textarea id="setHeroLede" rows="4"></textarea></label>
+            </div>
+            <div class="settings-group">
+              <h3>Hakkında</h3>
+              <label>Etiket<input id="setAboutLabel" /></label>
+              <label>Ana cümle<input id="setAboutLine1" /></label>
+              <label>Vurgulu cümle<input id="setAboutEmphasis" /></label>
+              <label>Paragraf 1<textarea id="setAboutP1" rows="5"></textarea></label>
+              <label>Paragraf 2<textarea id="setAboutP2" rows="5"></textarea></label>
+              <label>Paragraf 3<textarea id="setAboutP3" rows="5"></textarea></label>
+            </div>
+            <div class="settings-group">
+              <h3>İletişim</h3>
+              <label>E-posta<input id="setEmail" type="email" /></label>
+              <label>Instagram URL<input id="setInstagram" type="url" /></label>
+            </div>
+          </div>
+          <div class="settings-save"><span id="settingsMessage" class="form-message"></span><button class="button primary" type="submit">Ayarları kaydet</button></div>
+        </form>
+      </section>
     </section>
-  </div>
+  </main>
 
   <dialog id="editorDialog" class="editor-dialog">
-    <form id="editorForm" method="dialog">
-      <div class="editor-head">
-        <div><p class="eyebrow" id="editorEyebrow">Yeni içerik</p><h2 id="editorTitle">Yeni şiir</h2></div>
-        <button type="button" class="icon-btn" id="closeEditor" aria-label="Kapat">×</button>
+    <form id="editorForm" method="dialog" class="editor-form">
+      <header><div><p class="eyebrow" id="editorEyebrow">YENİ İÇERİK</p><h2 id="editorTitle">Yeni şiir</h2></div><button class="icon-button" id="closeEditor" type="button">×</button></header>
+      <input id="contentId" type="hidden" /><input id="contentType" type="hidden" value="poem" />
+      <div class="form-grid">
+        <label class="wide">Başlık<input id="contentTitle" required /></label>
+        <label>Slug<input id="contentSlug" placeholder="otomatik-olusturulur" /></label>
+        <label>Kategori<select id="contentCategory"><option value="hayat">Hayat</option><option value="insan">İnsan</option><option value="yalnizlik">Yalnızlık</option><option value="cocukluk">Çocukluk</option><option value="eski-zamanlar">Eski Zamanlar</option></select></label>
+        <label class="wide">Kısa alıntı / açıklama<textarea id="contentExcerpt" rows="3"></textarea></label>
+        <label class="wide">Metin<textarea id="contentBody" rows="14" required></textarea></label>
+        <label>Yayın tarihi<input id="contentDate" type="date" /></label>
+        <label>Durum<select id="contentStatus"><option value="draft">Taslak</option><option value="published">Yayında</option></select></label>
+        <label class="check-label"><input id="contentFeatured" type="checkbox" /> Öne çıkan içerik</label>
       </div>
-
-      <input type="hidden" id="contentId">
-      <input type="hidden" id="contentType" value="poem">
-
-      <div class="editor-grid">
-        <div class="editor-main">
-          <label>Başlık<input id="contentTitle" required maxlength="160" placeholder="Şiirin adı"></label>
-          <label>Kısa açıklama<textarea id="contentExcerpt" rows="3" maxlength="280" placeholder="Kartta görünecek kısa bölüm…"></textarea></label>
-          <label>Metin<textarea id="contentBody" class="body-editor" required rows="16" placeholder="Şiirini buraya yaz…"></textarea></label>
-        </div>
-
-        <aside class="editor-options">
-          <label>Kategori
-            <select id="contentCategory">
-              <option value="hayat">Hayat</option>
-              <option value="yalnizlik">Yalnızlık</option>
-              <option value="insan">İnsan</option>
-              <option value="cocukluk">Çocukluk</option>
-              <option value="eski-zamanlar">Eski Zamanlar</option>
-            </select>
-          </label>
-          <label>Yayın tarihi<input id="contentDate" type="date"></label>
-          <label>Durum<select id="contentStatus"><option value="draft">Taslak</option><option value="published">Yayında</option></select></label>
-          <label class="toggle-row"><span>Öne çıkar</span><input id="contentFeatured" type="checkbox"></label>
-          <div class="editor-note">“Yayında” seçildiğinde içerik ana sitede görünür. “Taslak” yalnızca bu panelde kalır.</div>
-        </aside>
-      </div>
-
-      <div class="editor-actions">
-        <button type="button" class="button danger hidden" id="deleteContentBtn">Sil</button>
-        <span class="form-message" id="editorMessage" aria-live="polite"></span>
-        <button type="button" class="button ghost" id="cancelEditor">Vazgeç</button>
-        <button type="submit" class="button primary" id="saveContentBtn">Kaydet <span>→</span></button>
-      </div>
+      <footer><button class="button danger hidden" id="deleteContentBtn" type="button">Sil</button><span id="editorMessage" class="form-message"></span><button class="button ghost" id="cancelEditor" type="button">Vazgeç</button><button class="button primary" id="saveContentBtn" type="submit">Kaydet</button></footer>
     </form>
   </dialog>
 
-  <dialog id="confirmDialog" class="confirm-dialog">
-    <h3>Bu içeriği silelim mi?</h3>
-    <p>Bu işlem geri alınamaz.</p>
-    <div><button class="button ghost" id="confirmCancel">Vazgeç</button><button class="button danger" id="confirmDelete">Evet, sil</button></div>
+  <dialog id="quoteDialog" class="editor-dialog small-dialog">
+    <form id="quoteForm" class="editor-form">
+      <header><div><p class="eyebrow">SÖZ</p><h2 id="quoteEditorTitle">Yeni söz</h2></div><button class="icon-button" id="closeQuoteEditor" type="button">×</button></header>
+      <input id="quoteId" type="hidden" />
+      <div class="form-grid"><label class="wide">Söz<textarea id="quoteText" rows="5" required></textarea></label><label>Durum<select id="quoteStatus"><option value="published">Yayında</option><option value="draft">Taslak</option></select></label><label>Sıra<input id="quoteSort" type="number" min="0" value="0" /></label></div>
+      <footer><button class="button danger hidden" id="deleteQuoteBtn" type="button">Sil</button><span></span><button class="button ghost" id="cancelQuote" type="button">Vazgeç</button><button class="button primary" type="submit">Kaydet</button></footer>
+    </form>
   </dialog>
 
-  <div id="toast" class="toast" aria-live="polite"></div>
+  <dialog id="audioDialog" class="editor-dialog small-dialog">
+    <form id="audioForm" class="editor-form">
+      <header><div><p class="eyebrow">SES KAYDI</p><h2 id="audioEditorTitle">Yeni sesli şiir</h2></div><button class="icon-button" id="closeAudioEditor" type="button">×</button></header>
+      <input id="audioId" type="hidden" />
+      <div class="form-grid">
+        <label class="wide">Başlık<input id="audioTitleInput" required /></label>
+        <label class="wide">Alt başlık<input id="audioSubtitleInput" placeholder="Çiftlik Filozofu · Sesli Şiir" /></label>
+        <label class="wide">MP3 / ses dosyası URL<input id="audioUrlInput" type="url" placeholder="https://.../siir.mp3" /></label>
+        <label>Süre etiketi<input id="audioDurationInput" placeholder="01:18" /></label>
+        <label>Durum<select id="audioStatusInput"><option value="draft">Taslak</option><option value="published">Yayında</option></select></label>
+        <label class="check-label"><input id="audioFeaturedInput" type="checkbox" /> Ana oynatıcıda göster</label>
+      </div>
+      <footer><button class="button danger hidden" id="deleteAudioBtn" type="button">Sil</button><span></span><button class="button ghost" id="cancelAudio" type="button">Vazgeç</button><button class="button primary" type="submit">Kaydet</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="confirmDialog" class="confirm-dialog"><div><h3>Silmek istediğine emin misin?</h3><p>Bu işlem geri alınamaz.</p><div><button class="button ghost" id="confirmCancel" type="button">Vazgeç</button><button class="button danger" id="confirmDelete" type="button">Sil</button></div></div></dialog>
+  <div id="toast" class="toast" role="status"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="content.js"></script>
   <script src="admin.js"></script>
 </body>
 </html>
