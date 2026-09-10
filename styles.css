@@ -71,6 +71,10 @@ button { font: inherit; }
   border-radius: 50%;
   pointer-events: none;
  }
+.hero-copy {
+  position: relative;
+  z-index: 2;
+}
 .eyebrow { margin: 0 0 22px; color: var(--accent); font-size: 11px; text-transform: uppercase; letter-spacing: .22em; font-weight: 600; }
 .hero h1, .section-heading h2, .audio-intro h2, .contact-shell h2 {
   font-family: var(--serif); font-weight: 400; margin: 0; letter-spacing: -.035em; line-height: .92;
