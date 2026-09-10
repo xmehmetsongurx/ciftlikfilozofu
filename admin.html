@@ -1,638 +1,165 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yönetim — Çiftlik Filozofu</title>
-<meta name="robots" content="noindex, nofollow">
-<script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Lora:wght@0,400;0,500&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --cream:#F5F1E6;--gold:#D8C79A;--gd:#B5A47A;--gp:#8C7A52;
-  --brown:#2F2A26;--mu:rgba(245,241,230,.5);--bd:rgba(245,241,230,.12);
-  --bg:#0e0c0a;--bg2:#111009;--bg3:#0b0908;
-  --danger:#c0392b;--danger-bg:rgba(192,57,43,.1);
-  --success:#27ae60;
-}
-html,body{min-height:100vh}
-body{background:var(--bg2);color:var(--cream);font-family:'Lora',Georgia,serif;-webkit-font-smoothing:antialiased}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--gp)}
-a{color:var(--gold);text-decoration:none}
-a:hover{text-decoration:underline}
-
-/* ─── LOGIN ─── */
-#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
-.login-box{width:100%;max-width:380px}
-.login-logo{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;letter-spacing:.1em;color:var(--gp);margin-bottom:3rem;text-align:center}
-.login-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:400;font-style:italic;color:var(--cream);margin-bottom:.5rem;text-align:center}
-.login-sub{font-size:13px;color:var(--mu);text-align:center;margin-bottom:2.5rem;line-height:1.7}
-
-/* ─── RATE LIMIT INDICATOR ─── */
-.rate-bar{height:2px;background:var(--bd);margin-bottom:1.5rem;overflow:hidden;border-radius:1px}
-.rate-fill{height:100%;background:var(--gold);transition:width .3s,background .3s}
-.rate-fill.warn{background:#e67e22}
-.rate-fill.danger{background:var(--danger)}
-.rate-label{font-size:10px;letter-spacing:.12em;color:var(--mu);margin-bottom:2rem;text-align:right}
-
-/* ─── FORM ELEMENTS ─── */
-.inp{margin-bottom:1.25rem}
-.inp label{display:block;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gp);margin-bottom:.5rem}
-.inp input,.inp textarea,.inp select{
-  width:100%;background:rgba(245,241,230,.05);border:1px solid var(--bd);
-  color:var(--cream);font-family:'Lora',serif;font-size:14px;
-  padding:.75rem 1rem;outline:none;transition:border-color .2s;resize:vertical;
-  appearance:none;-webkit-appearance:none;
-}
-.inp input:focus,.inp textarea:focus,.inp select:focus{border-color:var(--gold)}
-.inp textarea{min-height:130px;line-height:1.7}
-.inp select option{background:#1a1512;color:var(--cream)}
-.inp input.err,.inp textarea.err{border-color:var(--danger)}
-.inp-hint{font-size:11px;color:var(--mu);margin-top:.4rem;font-style:italic}
-
-/* ─── BUTTONS ─── */
-.btn{font-family:'Lora',serif;letter-spacing:.15em;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-.btn-primary{background:var(--gold);color:var(--brown);font-size:11px;padding:11px 26px;font-weight:500}
-.btn-primary:hover:not(:disabled){background:var(--gd)}
-.btn-ghost{background:none;color:var(--mu);border:1px solid var(--bd);font-size:10px;padding:8px 16px}
-.btn-ghost:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
-.btn-danger{background:none;color:var(--danger);border:1px solid rgba(192,57,43,.3);font-size:10px;padding:6px 14px}
-.btn-danger:hover:not(:disabled){background:var(--danger-bg)}
-.btn-sm{font-size:10px;padding:6px 14px}
-
-/* ─── ALERTS ─── */
-.alert{padding:.9rem 1.25rem;font-size:13px;border-radius:0;margin-bottom:1rem}
-.alert-err{background:var(--danger-bg);border:1px solid rgba(192,57,43,.3);color:#e57373}
-.alert-ok{background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3);color:#6fcf97}
-.alert-warn{background:rgba(230,126,34,.1);border:1px solid rgba(230,126,34,.3);color:#f0a56f}
-
-/* ─── LAYOUT ─── */
-#app{display:none;min-height:100vh}
-.topbar{background:var(--bg3);border-bottom:1px solid var(--bd);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
-.topbar-logo{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;letter-spacing:.06em;color:var(--cream)}
-.topbar-logo span{color:var(--gp);font-weight:400;font-size:12px;margin-left:.75rem;letter-spacing:.1em;text-transform:uppercase}
-.topbar-right{display:flex;align-items:center;gap:1.25rem}
-.user-email{font-size:11px;color:var(--gp);font-style:italic}
-.content{max-width:960px;margin:0 auto;padding:2.5rem 2rem 5rem}
-.page-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:400;font-style:italic;color:var(--cream);margin-bottom:.5rem}
-.page-sub{font-size:12px;color:var(--mu);margin-bottom:2.5rem;letter-spacing:.04em}
-
-/* ─── TABS ─── */
-.tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:2.5rem}
-.tab{font-family:'Lora',serif;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--mu);background:none;border:none;border-bottom:2px solid transparent;padding:.75rem 1.5rem;cursor:pointer;transition:all .2s;margin-bottom:-1px}
-.tab:hover{color:var(--cream)}
-.tab.act{color:var(--gold);border-bottom-color:var(--gold)}
-.panel{display:none}.panel.act{display:block}
-
-/* ─── FORM CARD ─── */
-.fcard{background:rgba(245,241,230,.025);border:1px solid var(--bd);padding:2rem;margin-bottom:2rem}
-.fcard-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;color:var(--cream);margin-bottom:1.75rem;font-style:italic}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.factions{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-top:1.5rem}
-.fmsg{font-size:12px;color:var(--gold);font-style:italic;opacity:0;transition:opacity .3s}
-.fmsg.show{opacity:1}
-
-/* ─── LIST ─── */
-.item-list{background:var(--bd);display:flex;flex-direction:column;gap:1px;margin-bottom:1.5rem}
-.item{background:var(--bg2);padding:1.1rem 1.5rem;display:flex;align-items:center;gap:1rem}
-.item-info{flex:1;min-width:0}
-.item-title{font-family:'Playfair Display',serif;font-size:15px;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.item-meta{font-size:11px;color:var(--gp);margin-top:.2rem;letter-spacing:.04em}
-.item-actions{display:flex;gap:.5rem;flex-shrink:0}
-.list-empty{padding:2rem;text-align:center;font-size:13px;color:var(--mu);font-style:italic}
-
-/* ─── RESPONSIVE ─── */
-@media(max-width:640px){
-  .topbar{padding:.875rem 1.25rem}
-  .content{padding:2rem 1.25rem 4rem}
-  .grid2{grid-template-columns:1fr}
-  .fcard{padding:1.5rem}
-  .item{flex-wrap:wrap}
-  .user-email{display:none}
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#11150f" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Çiftlik Filozofu — Yönetim</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css" />
 </head>
 <body>
+  <div class="grain" aria-hidden="true"></div>
 
-<!-- ════ LOGIN ════ -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">Çiftlik Filozofu</div>
-    <h1 class="login-title">Yönetim Paneli</h1>
-    <p class="login-sub">Supabase hesabınla giriş yap.<br>Sadece kayıtlı yöneticiler erişebilir.</p>
+  <main id="setupView" class="center-view hidden">
+    <section class="auth-card setup-card">
+      <div class="monogram">ÇF</div>
+      <p class="eyebrow">İlk kurulum</p>
+      <h1>Panel hazır.<br><em>Supabase bağlantısı eksik.</em></h1>
+      <p>Önce <code>supabase-setup.sql</code> dosyasını Supabase SQL Editor'de çalıştır, ardından <code>supabase-config.js</code> içine Project URL ve publishable key değerlerini yaz.</p>
+      <div class="setup-steps">
+        <span><b>01</b> SQL'i çalıştır</span>
+        <span><b>02</b> Admin kullanıcını oluştur</span>
+        <span><b>03</b> URL + key'i ekle</span>
+      </div>
+      <a class="button primary" href="index.html">Siteyi görüntüle</a>
+    </section>
+  </main>
 
-    <!-- Rate limit görsel göstergesi -->
-    <div class="rate-bar"><div class="rate-fill" id="rl-fill" style="width:0%"></div></div>
-    <p class="rate-label" id="rl-label" style="opacity:0">—</p>
+  <main id="loginView" class="center-view hidden">
+    <section class="auth-card">
+      <div class="monogram">ÇF</div>
+      <p class="eyebrow">Yönetim Paneli</p>
+      <h1>Tekrar<br><em>hoş geldin.</em></h1>
+      <form id="loginForm" class="stack-form">
+        <label>E-posta<input id="loginEmail" type="email" autocomplete="username" required placeholder="mail@adresin.com"></label>
+        <label>Şifre<input id="loginPassword" type="password" autocomplete="current-password" required placeholder="••••••••"></label>
+        <button class="button primary" type="submit">Giriş yap <span>→</span></button>
+        <p class="form-message" id="loginMessage" aria-live="polite"></p>
+      </form>
+      <a class="back-link" href="index.html">← Siteye dön</a>
+    </section>
+  </main>
 
-    <div id="login-alert"></div>
-    <div class="inp"><label>E-posta</label><input type="email" id="l-em" placeholder="admin@example.com" autocomplete="email"></div>
-    <div class="inp"><label>Şifre</label><input type="password" id="l-pw" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <div class="factions">
-      <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Giriş Yap</button>
-      <a href="index.html" class="btn btn-ghost btn-sm">← Siteye Dön</a>
-    </div>
+  <div id="adminView" class="admin-shell hidden">
+    <aside class="sidebar">
+      <a class="side-brand" href="index.html">
+        <span class="monogram small">ÇF</span>
+        <span><strong>Çiftlik Filozofu</strong><small>Yönetim</small></span>
+      </a>
+
+      <nav class="side-nav">
+        <button class="nav-item active" data-section="dashboard"><span>◌</span> Genel Bakış</button>
+        <button class="nav-item" data-section="poems"><span>✦</span> Şiirler</button>
+        <button class="nav-item" data-section="writings"><span>≋</span> Yazılar</button>
+      </nav>
+
+      <div class="side-bottom">
+        <a href="index.html" target="_blank">Siteyi aç ↗</a>
+        <button id="logoutBtn">Çıkış yap</button>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="pageEyebrow">Yönetim</p>
+          <h2 id="pageTitle">Genel Bakış</h2>
+        </div>
+        <button class="button primary" id="newContentBtn">+ Yeni şiir</button>
+      </header>
+
+      <div id="dashboardSection" class="panel-section">
+        <div class="welcome-card">
+          <span>Bugün</span>
+          <h3>Kelimelerini<br><em>yerine bırak.</em></h3>
+          <p>Buradan yayımladığın içerikler ana sitede otomatik görünür. Taslak içerikleri yalnızca sen görürsün.</p>
+        </div>
+
+        <div class="stats-grid">
+          <article><span>Toplam şiir</span><strong id="statPoems">0</strong></article>
+          <article><span>Yayında</span><strong id="statPublished">0</strong></article>
+          <article><span>Taslak</span><strong id="statDrafts">0</strong></article>
+          <article><span>Yazılar</span><strong id="statWritings">0</strong></article>
+        </div>
+
+        <div class="section-block">
+          <div class="block-heading"><div><p class="eyebrow">Son eklenenler</p><h3>En yeni içerikler</h3></div></div>
+          <div id="recentList" class="content-list"></div>
+        </div>
+      </div>
+
+      <div id="poemsSection" class="panel-section hidden">
+        <div class="list-toolbar">
+          <input id="poemSearch" type="search" placeholder="Şiirlerde ara…">
+          <select id="poemStatusFilter"><option value="all">Tüm durumlar</option><option value="published">Yayında</option><option value="draft">Taslak</option></select>
+        </div>
+        <div id="poemList" class="content-list"></div>
+      </div>
+
+      <div id="writingsSection" class="panel-section hidden">
+        <div class="list-toolbar"><input id="writingSearch" type="search" placeholder="Yazılarda ara…"></div>
+        <div id="writingListAdmin" class="content-list"></div>
+      </div>
+    </section>
   </div>
-</div>
 
-<!-- ════ APP ════ -->
-<div id="app">
-  <div class="topbar">
-    <div class="topbar-logo">Çiftlik Filozofu <span>Yönetim</span></div>
-    <div class="topbar-right">
-      <span class="user-email" id="u-email"></span>
-      <a href="index.html" class="btn btn-ghost btn-sm">Siteyi Gör</a>
-      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Çıkış</button>
-    </div>
-  </div>
+  <dialog id="editorDialog" class="editor-dialog">
+    <form id="editorForm" method="dialog">
+      <div class="editor-head">
+        <div><p class="eyebrow" id="editorEyebrow">Yeni içerik</p><h2 id="editorTitle">Yeni şiir</h2></div>
+        <button type="button" class="icon-btn" id="closeEditor" aria-label="Kapat">×</button>
+      </div>
 
-  <div class="content">
-    <h1 class="page-title">İçerik Yönetimi</h1>
-    <p class="page-sub" id="content-stats">Yükleniyor...</p>
+      <input type="hidden" id="contentId">
+      <input type="hidden" id="contentType" value="poem">
 
-    <!-- Action rate limit bar (write operations) -->
-    <div id="write-rl-wrap" style="display:none;margin-bottom:1.5rem">
-      <div class="alert alert-warn" id="write-rl-msg"></div>
-    </div>
+      <div class="editor-grid">
+        <div class="editor-main">
+          <label>Başlık<input id="contentTitle" required maxlength="160" placeholder="Şiirin adı"></label>
+          <label>Kısa açıklama<textarea id="contentExcerpt" rows="3" maxlength="280" placeholder="Kartta görünecek kısa bölüm…"></textarea></label>
+          <label>Metin<textarea id="contentBody" class="body-editor" required rows="16" placeholder="Şiirini buraya yaz…"></textarea></label>
+        </div>
 
-    <div class="tabs">
-      <button class="tab act" onclick="sw('tp',this)">Şiirler</button>
-      <button class="tab" onclick="sw('ta',this)">Yazılar</button>
-      <button class="tab" onclick="sw('tau',this)">Sesli Şiirler</button>
-    </div>
-
-    <!-- ── POEMS ── -->
-    <div class="panel act" id="tp">
-      <div class="fcard">
-        <div class="fcard-title" id="pft">Yeni Şiir Ekle</div>
-        <input type="hidden" id="pf-id">
-        <div class="grid2">
-          <div class="inp"><label>Başlık *</label><input type="text" id="pf-t" placeholder="Şiirin adı..."></div>
-          <div class="inp"><label>Kategori *</label>
-            <select id="pf-c">
-              <option value="Yalnızlık">Yalnızlık</option>
-              <option value="İnsan">İnsan</option>
-              <option value="Çocukluk">Çocukluk</option>
-              <option value="Eski Zamanlar">Eski Zamanlar</option>
-              <option value="Hayat">Hayat</option>
+        <aside class="editor-options">
+          <label>Kategori
+            <select id="contentCategory">
+              <option value="hayat">Hayat</option>
+              <option value="yalnizlik">Yalnızlık</option>
+              <option value="insan">İnsan</option>
+              <option value="cocukluk">Çocukluk</option>
+              <option value="eski-zamanlar">Eski Zamanlar</option>
             </select>
-          </div>
-        </div>
-        <div class="inp">
-          <label>Kısa Alıntı</label>
-          <input type="text" id="pf-e" placeholder="Listede görünecek ilk satır...">
-          <p class="inp-hint">Boş bırakılırsa şiirin ilk satırı kullanılır.</p>
-        </div>
-        <div class="inp">
-          <label>Şiir Metni *</label>
-          <textarea id="pf-f" style="min-height:200px" placeholder="Şiiri buraya yazın...&#10;&#10;Her paragraf arasına boş satır bırakın."></textarea>
-        </div>
-        <div class="inp">
-          <label>Ses Dosyası URL (opsiyonel)</label>
-          <input type="url" id="pf-a" placeholder="https://...">
-          <p class="inp-hint">Sesli versiyonu varsa ses dosyasının URL'i.</p>
-        </div>
-        <div id="p-alert"></div>
-        <div class="factions">
-          <button class="btn btn-primary" id="save-poem-btn" onclick="savePoem()">Kaydet</button>
-          <button class="btn btn-ghost" onclick="resetPF()">Temizle</button>
-          <span class="fmsg" id="pmsg">Kaydedildi ✓</span>
-        </div>
+          </label>
+          <label>Yayın tarihi<input id="contentDate" type="date"></label>
+          <label>Durum<select id="contentStatus"><option value="draft">Taslak</option><option value="published">Yayında</option></select></label>
+          <label class="toggle-row"><span>Öne çıkar</span><input id="contentFeatured" type="checkbox"></label>
+          <div class="editor-note">“Yayında” seçildiğinde içerik ana sitede görünür. “Taslak” yalnızca bu panelde kalır.</div>
+        </aside>
       </div>
-      <div class="item-list" id="poem-list"></div>
-    </div>
 
-    <!-- ── ARTICLES ── -->
-    <div class="panel" id="ta">
-      <div class="fcard">
-        <div class="fcard-title" id="aft">Yeni Yazı Ekle</div>
-        <input type="hidden" id="af-id">
-        <div class="inp"><label>Başlık *</label><input type="text" id="af-t" placeholder="Yazının başlığı..."></div>
-        <div class="inp">
-          <label>Özet</label>
-          <input type="text" id="af-e" placeholder="Kart görünümü için kısa özet...">
-          <p class="inp-hint">Anasayfada ve listede görünür.</p>
-        </div>
-        <div class="inp">
-          <label>Yazı İçeriği *</label>
-          <textarea id="af-f" style="min-height:240px" placeholder="Yazıyı buraya yazın...&#10;&#10;Boş satır = yeni paragraf."></textarea>
-        </div>
-        <div id="a-alert"></div>
-        <div class="factions">
-          <button class="btn btn-primary" id="save-art-btn" onclick="saveArticle()">Kaydet</button>
-          <button class="btn btn-ghost" onclick="resetAF()">Temizle</button>
-          <span class="fmsg" id="amsg">Kaydedildi ✓</span>
-        </div>
+      <div class="editor-actions">
+        <button type="button" class="button danger hidden" id="deleteContentBtn">Sil</button>
+        <span class="form-message" id="editorMessage" aria-live="polite"></span>
+        <button type="button" class="button ghost" id="cancelEditor">Vazgeç</button>
+        <button type="submit" class="button primary" id="saveContentBtn">Kaydet <span>→</span></button>
       </div>
-      <div class="item-list" id="art-list"></div>
-    </div>
+    </form>
+  </dialog>
 
-    <!-- ── AUDIO ── -->
-    <div class="panel" id="tau">
-      <div class="fcard">
-        <div class="fcard-title">Yeni Sesli Şiir Ekle</div>
-        <input type="hidden" id="auf-id">
-        <div class="grid2">
-          <div class="inp"><label>Başlık *</label><input type="text" id="auf-t" placeholder="Şiirin adı..."></div>
-          <div class="inp"><label>Süre</label><input type="text" id="auf-d" placeholder="2:14"></div>
-        </div>
-        <div class="inp"><label>Kısa Açıklama</label><input type="text" id="auf-e" placeholder="Bu ses kaydı hakkında bir not..."></div>
-        <div class="inp">
-          <label>Ses Dosyası URL</label>
-          <input type="url" id="auf-u" placeholder="https://...">
-          <p class="inp-hint">Dosyayı Google Drive, Cloudflare R2 veya benzeri bir CDN'e yükle.</p>
-        </div>
-        <div id="au-alert"></div>
-        <div class="factions">
-          <button class="btn btn-primary" id="save-au-btn" onclick="saveAudio()">Kaydet</button>
-          <button class="btn btn-ghost" onclick="resetAuF()">Temizle</button>
-          <span class="fmsg" id="aumsg">Kaydedildi ✓</span>
-        </div>
-      </div>
-      <div class="item-list" id="au-list"></div>
-    </div>
-  </div>
-</div>
+  <dialog id="confirmDialog" class="confirm-dialog">
+    <h3>Bu içeriği silelim mi?</h3>
+    <p>Bu işlem geri alınamaz.</p>
+    <div><button class="button ghost" id="confirmCancel">Vazgeç</button><button class="button danger" id="confirmDelete">Evet, sil</button></div>
+  </dialog>
 
-<script>
-/* ════ SUPABASE ════ */
-const sb = supabase.createClient(CF_CONFIG.supabaseUrl, CF_CONFIG.supabaseAnonKey);
+  <div id="toast" class="toast" aria-live="polite"></div>
 
-/* ════ RATE LIMITER ════
-   Basit token bucket — sayfa içi.
-   Login: 5 deneme / 15 dakika
-   Write: 20 işlem / dakika
-════════════════════════ */
-class RateLimiter {
-  constructor(max, windowMs, label='') {
-    this.max = max;
-    this.window = windowMs;
-    this.label = label;
-    this.log = []; // timestamps
-  }
-  check() {
-    const now = Date.now();
-    this.log = this.log.filter(t => now - t < this.window);
-    return this.log.length < this.max;
-  }
-  consume() {
-    if (!this.check()) return false;
-    this.log.push(Date.now());
-    return true;
-  }
-  remaining() {
-    const now = Date.now();
-    this.log = this.log.filter(t => now - t < this.window);
-    return Math.max(0, this.max - this.log.length);
-  }
-  pct() { return Math.min(100, (this.log.length / this.max) * 100); }
-  nextResetMs() {
-    if (!this.log.length) return 0;
-    return Math.max(0, this.window - (Date.now() - this.log[0]));
-  }
-}
-
-const loginRL = new RateLimiter(5, 15 * 60 * 1000, 'login');  // 5 deneme / 15 dk
-const writeRL = new RateLimiter(20, 60 * 1000, 'write');       // 20 write / 1 dk
-
-/* Giriş denemesi rate bar güncelle */
-function updateLoginBar() {
-  const pct = loginRL.pct();
-  const fill = document.getElementById('rl-fill');
-  const lbl  = document.getElementById('rl-label');
-  if (loginRL.log.length === 0) { fill.style.width='0%'; lbl.style.opacity='0'; return; }
-  fill.style.width = pct + '%';
-  fill.className = 'rate-fill' + (pct>=80?' danger':pct>=50?' warn':'');
-  lbl.textContent = `${loginRL.remaining()} giriş hakkı kaldı`;
-  lbl.style.opacity = '1';
-}
-
-/* Write rate limit uyarısı */
-function checkWriteRL(btnId) {
-  if (!writeRL.check()) {
-    const ms = writeRL.nextResetMs();
-    const secs = Math.ceil(ms / 1000);
-    document.getElementById('write-rl-wrap').style.display = 'block';
-    document.getElementById('write-rl-msg').textContent =
-      `Çok fazla işlem yapıldı. ${secs} saniye bekleyin.`;
-    if (btnId) {
-      const btn = document.getElementById(btnId);
-      if (btn) {
-        btn.disabled = true;
-        setTimeout(() => {
-          btn.disabled = false;
-          document.getElementById('write-rl-wrap').style.display = 'none';
-        }, ms);
-      }
-    }
-    return false;
-  }
-  document.getElementById('write-rl-wrap').style.display = 'none';
-  return writeRL.consume();
-}
-
-/* ════ HELPERS ════ */
-const fmt = d => d
-  ? new Date(d).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})
-  : '';
-
-function setAlert(id, msg, type='err') {
-  const el = document.getElementById(id);
-  if (!el) return;
-  if (!msg) { el.innerHTML=''; return; }
-  el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
-}
-
-function showMsg(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2500);
-}
-
-function ldHtml() {
-  return '<div class="list-empty">Yükleniyor...</div>';
-}
-
-/* ════ AUTH ════ */
-async function doLogin() {
-  if (!loginRL.consume()) {
-    const secs = Math.ceil(loginRL.nextResetMs() / 1000);
-    setAlert('login-alert', `Çok fazla deneme. ${secs} saniye bekleyin.`, 'err');
-    updateLoginBar();
-    return;
-  }
-  updateLoginBar();
-
-  const email = document.getElementById('l-em').value.trim();
-  const pw    = document.getElementById('l-pw').value;
-  setAlert('login-alert','');
-
-  if (!email || !pw) { setAlert('login-alert','E-posta ve şifre gerekli.'); return; }
-
-  const btn = document.getElementById('login-btn');
-  btn.disabled = true;
-  btn.textContent = 'Giriş yapılıyor...';
-
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
-
-  btn.disabled = false;
-  btn.textContent = 'Giriş Yap';
-
-  if (error) {
-    setAlert('login-alert', 'Giriş başarısız: ' + error.message);
-    updateLoginBar();
-    return;
-  }
-  showApp(data.user);
-}
-
-async function doLogout() {
-  await sb.auth.signOut();
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('l-pw').value = '';
-}
-
-function showApp(user) {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  document.getElementById('u-email').textContent = user.email;
-  loadAll();
-}
-
-/* ════ AUTO SESSION CHECK ════ */
-(async () => {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) showApp(session.user);
-})();
-
-/* ════ TABS ════ */
-function sw(id, el) {
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('act'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('act'));
-  document.getElementById(id).classList.add('act');
-  el.classList.add('act');
-}
-
-/* ════ LOAD ALL ════ */
-async function loadAll() {
-  await Promise.all([loadPoems(), loadArticles(), loadAudio()]);
-  updateStats();
-}
-
-async function updateStats() {
-  const [pr, ar] = await Promise.all([
-    sb.from('poems').select('*',{count:'exact',head:true}),
-    sb.from('articles').select('*',{count:'exact',head:true}),
-  ]);
-  document.getElementById('content-stats').textContent =
-    `${pr.count||0} şiir · ${ar.count||0} yazı`;
-}
-
-/* ════ POEMS ════ */
-async function loadPoems() {
-  document.getElementById('poem-list').innerHTML = ldHtml();
-  const { data, error } = await sb.from('poems')
-    .select('id,title,category,created_at')
-    .order('created_at',{ascending:false});
-  if (error) { document.getElementById('poem-list').innerHTML='<div class="list-empty">Yüklenemedi.</div>'; return; }
-  document.getElementById('poem-list').innerHTML = (data||[]).length
-    ? data.map(p=>`
-      <div class="item">
-        <div class="item-info">
-          <div class="item-title">${p.title}</div>
-          <div class="item-meta">${p.category||''} · ${fmt(p.created_at)}</div>
-        </div>
-        <div class="item-actions">
-          <button class="btn btn-ghost btn-sm" onclick="editPoem('${p.id}')">Düzenle</button>
-          <button class="btn btn-danger btn-sm" onclick="deletePoem('${p.id}','${p.title.replace(/'/g,"\\'")}')">Sil</button>
-        </div>
-      </div>`).join('')
-    : '<div class="list-empty">Henüz şiir eklenmemiş.</div>';
-}
-
-async function savePoem() {
-  if (!checkWriteRL('save-poem-btn')) return;
-  setAlert('p-alert','');
-  const id = document.getElementById('pf-id').value;
-  const title   = document.getElementById('pf-t').value.trim();
-  const content = document.getElementById('pf-f').value.trim();
-  const excerpt = document.getElementById('pf-e').value.trim();
-  const cat     = document.getElementById('pf-c').value;
-  const audioUrl= document.getElementById('pf-a').value.trim()||null;
-
-  if (!title)   { setAlert('p-alert','Başlık zorunlu.'); document.getElementById('pf-t').classList.add('err'); return; }
-  if (!content) { setAlert('p-alert','Şiir metni zorunlu.'); document.getElementById('pf-f').classList.add('err'); return; }
-
-  ['pf-t','pf-f'].forEach(i=>document.getElementById(i).classList.remove('err'));
-  document.getElementById('save-poem-btn').disabled = true;
-
-  const payload = { title, content, excerpt: excerpt || content.split('\n')[0], category: cat, audio_url: audioUrl };
-  const { error } = id
-    ? await sb.from('poems').update(payload).eq('id',id)
-    : await sb.from('poems').insert(payload);
-
-  document.getElementById('save-poem-btn').disabled = false;
-
-  if (error) { setAlert('p-alert', 'Hata: '+error.message); return; }
-  resetPF(); showMsg('pmsg'); loadPoems(); updateStats();
-}
-
-async function editPoem(id) {
-  const { data, error } = await sb.from('poems').select('*').eq('id',id).single();
-  if (error||!data) return;
-  document.getElementById('pf-id').value  = data.id;
-  document.getElementById('pf-t').value   = data.title;
-  document.getElementById('pf-c').value   = data.category||'Hayat';
-  document.getElementById('pf-e').value   = data.excerpt||'';
-  document.getElementById('pf-f').value   = data.content;
-  document.getElementById('pf-a').value   = data.audio_url||'';
-  document.getElementById('pft').textContent = 'Şiiri Düzenle';
-  document.getElementById('tp').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-async function deletePoem(id, title) {
-  if (!confirm(`"${title}" silinecek. Emin misiniz?`)) return;
-  if (!checkWriteRL()) return;
-  const { error } = await sb.from('poems').delete().eq('id',id);
-  if (error) { alert('Silinemedi: '+error.message); return; }
-  loadPoems(); updateStats();
-}
-
-function resetPF() {
-  ['pf-id','pf-t','pf-e','pf-f','pf-a'].forEach(i=>{ const el=document.getElementById(i); if(el){el.value='';el.classList.remove('err');} });
-  document.getElementById('pft').textContent = 'Yeni Şiir Ekle';
-  setAlert('p-alert','');
-}
-
-/* ════ ARTICLES ════ */
-async function loadArticles() {
-  document.getElementById('art-list').innerHTML = ldHtml();
-  const { data, error } = await sb.from('articles')
-    .select('id,title,created_at')
-    .order('created_at',{ascending:false});
-  if (error) { document.getElementById('art-list').innerHTML='<div class="list-empty">Yüklenemedi.</div>'; return; }
-  document.getElementById('art-list').innerHTML = (data||[]).length
-    ? data.map(a=>`
-      <div class="item">
-        <div class="item-info">
-          <div class="item-title">${a.title}</div>
-          <div class="item-meta">${fmt(a.created_at)}</div>
-        </div>
-        <div class="item-actions">
-          <button class="btn btn-ghost btn-sm" onclick="editArticle('${a.id}')">Düzenle</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteArticle('${a.id}','${a.title.replace(/'/g,"\\'")}')">Sil</button>
-        </div>
-      </div>`).join('')
-    : '<div class="list-empty">Henüz yazı eklenmemiş.</div>';
-}
-
-async function saveArticle() {
-  if (!checkWriteRL('save-art-btn')) return;
-  setAlert('a-alert','');
-  const id      = document.getElementById('af-id').value;
-  const title   = document.getElementById('af-t').value.trim();
-  const content = document.getElementById('af-f').value.trim();
-  const excerpt = document.getElementById('af-e').value.trim();
-
-  if (!title)   { setAlert('a-alert','Başlık zorunlu.'); document.getElementById('af-t').classList.add('err'); return; }
-  if (!content) { setAlert('a-alert','İçerik zorunlu.'); document.getElementById('af-f').classList.add('err'); return; }
-
-  ['af-t','af-f'].forEach(i=>document.getElementById(i).classList.remove('err'));
-  document.getElementById('save-art-btn').disabled = true;
-
-  const payload = { title, content, excerpt: excerpt || title };
-  const { error } = id
-    ? await sb.from('articles').update(payload).eq('id',id)
-    : await sb.from('articles').insert(payload);
-
-  document.getElementById('save-art-btn').disabled = false;
-  if (error) { setAlert('a-alert','Hata: '+error.message); return; }
-  resetAF(); showMsg('amsg'); loadArticles(); updateStats();
-}
-
-async function editArticle(id) {
-  const { data, error } = await sb.from('articles').select('*').eq('id',id).single();
-  if (error||!data) return;
-  document.getElementById('af-id').value = data.id;
-  document.getElementById('af-t').value  = data.title;
-  document.getElementById('af-e').value  = data.excerpt||'';
-  document.getElementById('af-f').value  = data.content;
-  document.getElementById('aft').textContent = 'Yazıyı Düzenle';
-  document.getElementById('ta').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-async function deleteArticle(id, title) {
-  if (!confirm(`"${title}" silinecek. Emin misiniz?`)) return;
-  if (!checkWriteRL()) return;
-  const { error } = await sb.from('articles').delete().eq('id',id);
-  if (error) { alert('Silinemedi: '+error.message); return; }
-  loadArticles(); updateStats();
-}
-
-function resetAF() {
-  ['af-id','af-t','af-e','af-f'].forEach(i=>{ const el=document.getElementById(i); if(el){el.value='';el.classList.remove('err');} });
-  document.getElementById('aft').textContent = 'Yeni Yazı Ekle';
-  setAlert('a-alert','');
-}
-
-/* ════ AUDIO ════ */
-async function loadAudio() {
-  document.getElementById('au-list').innerHTML = ldHtml();
-  const { data, error } = await sb.from('audio')
-    .select('id,title,duration,audio_url,created_at')
-    .order('created_at',{ascending:false});
-  if (error) { document.getElementById('au-list').innerHTML='<div class="list-empty">Yüklenemedi.</div>'; return; }
-  document.getElementById('au-list').innerHTML = (data||[]).length
-    ? data.map(a=>`
-      <div class="item">
-        <div class="item-info">
-          <div class="item-title">${a.title}</div>
-          <div class="item-meta">${a.duration||'—'} · ${a.audio_url?'URL var':'URL yok'} · ${fmt(a.created_at)}</div>
-        </div>
-        <div class="item-actions">
-          <button class="btn btn-danger btn-sm" onclick="deleteAudio('${a.id}','${a.title.replace(/'/g,"\\'")}')">Sil</button>
-        </div>
-      </div>`).join('')
-    : '<div class="list-empty">Henüz sesli şiir eklenmemiş.</div>';
-}
-
-async function saveAudio() {
-  if (!checkWriteRL('save-au-btn')) return;
-  setAlert('au-alert','');
-  const title = document.getElementById('auf-t').value.trim();
-  if (!title) { setAlert('au-alert','Başlık zorunlu.'); document.getElementById('auf-t').classList.add('err'); return; }
-  document.getElementById('auf-t').classList.remove('err');
-  document.getElementById('save-au-btn').disabled = true;
-  const payload = {
-    title,
-    description: document.getElementById('auf-e').value.trim(),
-    duration:    document.getElementById('auf-d').value.trim()||null,
-    audio_url:   document.getElementById('auf-u').value.trim()||null,
-  };
-  const { error } = await sb.from('audio').insert(payload);
-  document.getElementById('save-au-btn').disabled = false;
-  if (error) { setAlert('au-alert','Hata: '+error.message); return; }
-  resetAuF(); showMsg('aumsg'); loadAudio();
-}
-
-async function deleteAudio(id, title) {
-  if (!confirm(`"${title}" silinecek. Emin misiniz?`)) return;
-  if (!checkWriteRL()) return;
-  const { error } = await sb.from('audio').delete().eq('id',id);
-  if (error) { alert('Silinemedi: '+error.message); return; }
-  loadAudio();
-}
-
-function resetAuF() {
-  ['auf-id','auf-t','auf-e','auf-d','auf-u'].forEach(i=>{ const el=document.getElementById(i); if(el){el.value='';el.classList.remove('err');} });
-  setAlert('au-alert','');
-}
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="admin.js"></script>
 </body>
 </html>

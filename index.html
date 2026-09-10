@@ -1,565 +1,202 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Çiftlik Filozofu — Sessizlikte Doğan Sözler</title>
-<meta name="description" content="Şair, gözlemci, sessiz düşünür. Modern dünyanın gürültüsü içinde kaybolan insanlara sade, samimi ve derin metinler.">
-<meta name="author" content="Çiftlik Filozofu">
-<link rel="canonical" href="https://ciftlikfilozofu.com">
-<script type="application/ld+json">
-{"@context":"https://schema.org","@graph":[
-  {"@type":"Person","@id":"https://ciftlikfilozofu.com/#person","name":"Çiftlik Filozofu","url":"https://ciftlikfilozofu.com","sameAs":["https://instagram.com/ciftlikfilozofu"],"jobTitle":"Şair","knowsLanguage":"tr"},
-  {"@type":"WebSite","@id":"https://ciftlikfilozofu.com/#website","url":"https://ciftlikfilozofu.com","name":"Çiftlik Filozofu","author":{"@id":"https://ciftlikfilozofu.com/#person"},"inLanguage":"tr"}
-]}
-</script>
-<script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --cream:#F5F1E6;--gold:#D8C79A;--gd:#B5A47A;--gp:#8C7A52;
-  --brown:#2F2A26;--mu:rgba(245,241,230,.5);--bd:rgba(245,241,230,.12);
-  --bg:#0e0c0a;--bg2:#111009;--bg3:#0b0908;
-}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--cream);font-family:'Lora',Georgia,serif;overflow-x:hidden;cursor:none}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--gp)}
-#cur{position:fixed;width:7px;height:7px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
-#curr{position:fixed;width:34px;height:34px;border:1px solid rgba(216,199,154,.35);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s}
-nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:1.75rem 2.5rem;background:linear-gradient(to bottom,rgba(14,12,10,.8),transparent)}
-.logo{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;letter-spacing:.08em;color:var(--cream);cursor:pointer;z-index:600;position:relative}
-.burger{width:28px;height:18px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;z-index:600}
-.burger span{display:block;height:1px;background:var(--cream);transition:all .4s cubic-bezier(.23,1,.32,1);transform-origin:center}
-.burger.open span:nth-child(1){transform:translateY(8.5px) rotate(45deg)}
-.burger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
-.burger.open span:nth-child(3){transform:translateY(-8.5px) rotate(-45deg)}
-.ov{position:fixed;inset:0;background:#090705;z-index:400;display:flex;align-items:center;padding:0 3.5rem;clip-path:circle(0% at calc(100% - 3rem) 3.5rem);transition:clip-path .65s cubic-bezier(.77,0,.175,1)}
-.ov.open{clip-path:circle(160% at calc(100% - 3rem) 3.5rem)}
-.o-nav{list-style:none;display:flex;flex-direction:column;gap:.2rem}
-.o-nav li{overflow:hidden}
-.o-nav a{display:block;font-family:'Playfair Display',serif;font-size:clamp(30px,7vw,68px);font-weight:400;color:rgba(245,241,230,.18);text-decoration:none;cursor:pointer;line-height:1.25;transform:translateY(105%);transition:transform .5s cubic-bezier(.23,1,.32,1),color .3s}
-.ov.open .o-nav a{transform:translateY(0)}
-.ov.open .o-nav li:nth-child(1) a{transition-delay:.08s}
-.ov.open .o-nav li:nth-child(2) a{transition-delay:.13s}
-.ov.open .o-nav li:nth-child(3) a{transition-delay:.18s}
-.ov.open .o-nav li:nth-child(4) a{transition-delay:.23s}
-.ov.open .o-nav li:nth-child(5) a{transition-delay:.28s}
-.ov.open .o-nav li:nth-child(6) a{transition-delay:.33s}
-.o-nav a:hover,.o-nav a.act{color:var(--gold)}
-.o-num{font-size:11px;letter-spacing:.2em;color:var(--gp);vertical-align:super;margin-right:.6rem;font-family:'Lora',serif}
-.o-social{position:absolute;bottom:3rem;left:3.5rem;display:flex;gap:2.5rem}
-.o-social a{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mu);cursor:pointer;transition:color .2s}
-.o-social a:hover{color:var(--cream)}
-.dots{position:fixed;right:1.75rem;top:50%;transform:translateY(-50%);z-index:300;display:flex;flex-direction:column;gap:13px}
-.dot{width:6px;height:6px;border-radius:50%;background:rgba(245,241,230,.25);cursor:pointer;transition:all .3s;position:relative}
-.dot::before{content:attr(data-l);position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);white-space:nowrap;opacity:0;transition:opacity .3s;font-family:'Lora',serif}
-.dot:hover::before,.dot.act::before{opacity:1}
-.dot.act{background:var(--gold);width:8px;height:8px}
-.sec{min-height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
-.sp{padding:6rem 3rem}
-/* HERO */
-#hero{background:var(--bg)}
-.h-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 65% 55%,rgba(47,42,38,.65) 0%,transparent 70%)}
-.grain{position:absolute;inset:-50%;width:200%;height:200%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");opacity:.35;animation:gr .9s steps(2) infinite;pointer-events:none}
-@keyframes gr{0%{transform:translate(0,0)}25%{transform:translate(-3%,3%)}50%{transform:translate(2%,-2%)}75%{transform:translate(-1%,4%)}100%{transform:translate(3%,-1%)}}
-.hc{position:relative;z-index:2;padding:0 3rem;max-width:880px}
-.h-eye{font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--gp);margin-bottom:2rem;opacity:0;animation:fu 1s .3s ease forwards}
-.h-title{font-family:'Playfair Display',serif;font-size:clamp(44px,8.5vw,90px);font-weight:400;line-height:1.08;margin-bottom:2.5rem;opacity:0;animation:fu 1s .5s ease forwards}
-.h-title em{font-style:italic;color:var(--gold)}
-.h-sub{font-size:15px;line-height:1.9;color:var(--mu);max-width:420px;margin-bottom:2rem;opacity:0;animation:fu 1s .7s ease forwards}
-.daily{background:rgba(216,199,154,.06);border:1px solid rgba(216,199,154,.2);padding:1.5rem 2rem;max-width:520px;margin-bottom:2.5rem;opacity:0;animation:fu 1s .75s ease forwards}
-.daily-lbl{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gp);margin-bottom:.75rem}
-.daily-t{font-family:'Playfair Display',serif;font-size:18px;font-style:italic;color:var(--cream);margin-bottom:.5rem;cursor:pointer}
-.daily-t:hover{color:var(--gold)}
-.daily-e{font-size:13px;font-style:italic;color:var(--mu);line-height:1.7}
-.h-btn{display:inline-flex;align-items:center;gap:1rem;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cream);background:none;border:none;cursor:pointer;opacity:0;animation:fu 1s .9s ease forwards;font-family:'Lora',serif}
-.h-ln{width:48px;height:1px;background:var(--gold);transition:width .3s}
-.h-btn:hover .h-ln{width:80px}
-.scr{position:absolute;bottom:2.5rem;left:3rem;display:flex;align-items:center;gap:1rem;opacity:0;animation:fi 1s 1.2s ease forwards}
-.scr-b{width:38px;height:1px;background:rgba(216,199,154,.25);overflow:hidden;position:relative}
-.scr-b::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--gold);animation:sa 2s ease-in-out infinite}
-@keyframes sa{0%{left:-100%}100%{left:100%}}
-.scr-t{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--mu)}
-/* SEC HEADER */
-.sh{display:flex;align-items:baseline;gap:1.5rem;margin-bottom:3.5rem}
-.sn{font-size:10px;letter-spacing:.3em;color:var(--gp)}
-.st{font-family:'Playfair Display',serif;font-size:clamp(34px,5.5vw,62px);font-weight:400;line-height:1.1}
-.st em{color:var(--gold);font-style:italic}
-/* TAGS */
-.frow{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:2.5rem}
-.tag{font-family:'Lora',serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:6px 16px;border:1px solid var(--bd);color:var(--mu);background:none;cursor:pointer;transition:all .2s}
-.tag:hover,.tag.act{background:var(--gold);color:var(--brown);border-color:var(--gold)}
-/* POEM ROWS */
-.prows{max-width:820px}
-.prow{display:flex;align-items:baseline;justify-content:space-between;padding:1.75rem 0;border-bottom:1px solid var(--bd);cursor:pointer;gap:1rem;transition:opacity .2s}
-.prow:hover{opacity:.55}
-.prow:hover .pa{transform:translateX(5px);opacity:1}
-.prl{flex:1}
-.prn{font-size:10px;letter-spacing:.2em;color:var(--gp);margin-bottom:.35rem}
-.prt{font-family:'Playfair Display',serif;font-size:clamp(17px,2.8vw,24px);font-weight:400;color:var(--cream);margin-bottom:.4rem}
-.pre{font-style:italic;font-size:13px;color:var(--mu);line-height:1.6}
-.prr{display:flex;align-items:center;gap:1.25rem;flex-shrink:0}
-.prc{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gp)}
-.pa{font-size:13px;color:var(--gold);opacity:0;transition:transform .2s,opacity .2s}
-/* STATES */
-.ld{padding:3rem 0;display:flex;align-items:center;gap:1rem;color:var(--mu);font-size:13px;font-style:italic}
-.sp2{width:16px;height:16px;border:1px solid var(--bd);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
-@keyframes spin{to{transform:rotate(360deg)}}
-.empty{padding:3rem 0;color:var(--mu);font-style:italic;font-size:14px}
-/* LOAD MORE */
-.lm-wrap{display:none;flex-direction:column;align-items:center;gap:1rem;padding:2.5rem 0}
-.lm-cnt{font-size:11px;letter-spacing:.15em;color:var(--gp)}
-.lm-btn{font-family:'Lora',serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cream);background:none;border:1px solid var(--bd);padding:10px 28px;cursor:pointer;transition:border-color .2s}
-.lm-btn:hover{border-color:var(--gold)}
-/* OVERLAYS */
-.ov2{position:fixed;inset:0;z-index:700;overflow-y:auto;transform:translateX(100%);transition:transform .55s cubic-bezier(.77,0,.175,1)}
-.ov2.open{transform:translateX(0)}
-.ov2-in{max-width:660px;margin:0 auto;padding:8rem 3rem 6rem}
-.clbtn{position:fixed;top:1.75rem;right:2.5rem;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--mu);background:none;border:none;cursor:pointer;font-family:'Lora',serif;transition:color .2s;z-index:800}
-.clbtn:hover{color:var(--cream)}
-.ov2-t{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,50px);font-weight:400;font-style:italic;line-height:1.2;color:var(--cream);margin-bottom:.5rem}
-.ov2-m{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gp);margin-bottom:2.5rem}
-.ov2-r{width:30px;height:1px;background:var(--gold);margin-bottom:2.5rem}
-.ov2-body{font-family:'Playfair Display',serif;font-size:19px;font-style:italic;line-height:2.4;color:var(--cream);white-space:pre-line}
-.ov2-prose{font-size:16px;line-height:2.1;color:var(--cream)}
-.ov2-prose p{margin-bottom:1.5rem}
-.ov2-prose p.s{color:var(--mu)}
-.ov2-share{margin-top:3.5rem;padding-top:2rem;border-top:1px solid var(--bd);display:flex;gap:2rem;align-items:center}
-.sl{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mu)}
-.sb{font-family:'Lora',serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--cream);background:none;border:none;border-bottom:1px solid rgba(245,241,230,.25);padding-bottom:2px;cursor:pointer;transition:color .2s,border-color .2s}
-.sb:hover{color:var(--gold);border-color:var(--gold)}
-/* ARTICLES */
-.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;max-width:920px;background:var(--bd)}
-.acard{background:var(--bg3);padding:2.5rem 2rem;cursor:pointer;transition:background .3s}
-.acard:hover{background:#171310}
-.an{font-size:10px;letter-spacing:.2em;color:var(--gp);margin-bottom:.75rem}
-.at{font-family:'Playfair Display',serif;font-size:19px;font-weight:400;color:var(--cream);margin-bottom:.75rem;line-height:1.35}
-.ae{font-size:13px;line-height:1.8;color:var(--mu);margin-bottom:1.25rem}
-.ad{font-size:9px;letter-spacing:.15em;color:var(--gp);text-transform:uppercase}
-/* AUDIO */
-.aulist{max-width:700px}
-.auitem{padding:2.25rem 0;border-bottom:1px solid var(--bd)}
-.auh{display:flex;align-items:center;gap:1.5rem;margin-bottom:.75rem}
-.aupb{width:44px;height:44px;border-radius:50%;border:1px solid var(--bd);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:13px;flex-shrink:0;transition:border-color .2s,background .2s}
-.aupb:hover{border-color:var(--gold);background:rgba(216,199,154,.07)}
-.aut{font-family:'Playfair Display',serif;font-size:21px;color:var(--cream)}
-.aud{font-size:13px;font-style:italic;color:var(--mu);margin-bottom:1rem;padding-left:3.75rem}
-.auwv{height:2px;background:var(--bd);position:relative;cursor:pointer;margin-left:3.75rem}
-.auwvf{position:absolute;left:0;top:0;height:100%;background:linear-gradient(to right,var(--gp),var(--gold));transition:width .1s}
-.auwv::after{content:attr(data-t);position:absolute;right:0;top:-17px;font-size:9px;letter-spacing:.1em;color:var(--mu);font-family:'Lora',serif}
-/* ABOUT / CONTACT */
-.abin,.coin{max-width:660px}
-.abq{font-family:'Playfair Display',serif;font-size:clamp(21px,3.5vw,34px);font-weight:400;font-style:italic;line-height:1.55;color:var(--cream);margin-bottom:2.5rem}
-.abq em{color:var(--gold)}
-.abrule{width:36px;height:1px;background:var(--gold);margin-bottom:2.25rem}
-.abtxt p{font-size:15px;line-height:2.1;margin-bottom:1.6rem}
-.abtxt p.s{color:var(--mu)}
-.cobig{font-family:'Playfair Display',serif;font-size:clamp(27px,5vw,50px);font-weight:400;font-style:italic;line-height:1.3;color:var(--cream);margin-bottom:3rem}
-.cobig em{color:var(--gold)}
-.colist{list-style:none}
-.coitem{display:flex;align-items:baseline;gap:2rem;padding:1.6rem 0;border-bottom:1px solid var(--bd)}
-.col{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--gp);width:72px;flex-shrink:0}
-.cov{font-size:15px}
-/* FOOTER */
-.ft{padding:2rem 3rem;border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:var(--bg3)}
-.ft p{font-size:11px;letter-spacing:.07em;color:var(--mu)}
-/* REVEAL */
-.rv{opacity:0;transform:translateY(28px);transition:opacity .75s ease,transform .75s ease}
-.rv.vis{opacity:1;transform:none}
-.d1{transition-delay:.08s}.d2{transition-delay:.16s}
-@keyframes fu{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-@keyframes fi{from{opacity:0}to{opacity:1}}
-@media(max-width:680px){
-  nav,.scr{padding-left:1.5rem}
-  nav{padding-right:1.5rem}
-  .hc{padding-left:1.5rem}
-  .sp{padding:5rem 1.5rem}
-  .ov,.o-social{padding-left:1.5rem}
-  .ov2-in{padding:6rem 1.5rem 4rem}
-  .dots{right:1rem}
-  .prr{display:none}
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#11150f" />
+  <meta name="description" content="Çiftlik Filozofu — şiirler, yazılar ve sessizlikte doğan sözler." />
+  <title>Çiftlik Filozofu — Sessizlikte Doğan Sözler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<div id="cur"></div>
-<div id="curr"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="reading-progress" id="readingProgress" aria-hidden="true"></div>
 
-<nav>
-  <div class="logo" onclick="sc('hero')">Çiftlik Filozofu</div>
-  <div style="display:flex;align-items:center;gap:1.5rem">
-    <a href="admin.html" style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gp);text-decoration:none">Yönetim</a>
-    <div class="burger" id="brg" onclick="tgl()"><span></span><span></span><span></span></div>
-  </div>
-</nav>
+  <header class="site-header" id="top">
+    <a class="brand" href="#top" aria-label="Çiftlik Filozofu ana sayfa">
+      <span class="brand-mark">ÇF</span>
+      <span class="brand-copy">
+        <strong>Çiftlik Filozofu</strong>
+        <small>Sessizlikte doğan sözler</small>
+      </span>
+    </a>
 
-<div class="ov" id="ov">
-  <ul class="o-nav">
-    <li><a onclick="go('hero')" class="act" id="mn0"><span class="o-num">01</span>Ana Sayfa</a></li>
-    <li><a onclick="go('poems')" id="mn1"><span class="o-num">02</span>Şiirler</a></li>
-    <li><a onclick="go('articles')" id="mn2"><span class="o-num">03</span>Yazılar</a></li>
-    <li><a onclick="go('audio')" id="mn3"><span class="o-num">04</span>Sesli Şiirler</a></li>
-    <li><a onclick="go('about')" id="mn4"><span class="o-num">05</span>Hakkında</a></li>
-    <li><a onclick="go('contact')" id="mn5"><span class="o-num">06</span>İletişim</a></li>
-  </ul>
-  <div class="o-social"><a id="ig-link"></a><a id="em-link"></a></div>
-</div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Menüyü aç" aria-expanded="false">
+      <span></span><span></span>
+    </button>
 
-<div class="dots">
-  <div class="dot act" data-t="hero" data-l="Ana Sayfa" onclick="sc('hero')"></div>
-  <div class="dot" data-t="poems" data-l="Şiirler" onclick="sc('poems')"></div>
-  <div class="dot" data-t="articles" data-l="Yazılar" onclick="sc('articles')"></div>
-  <div class="dot" data-t="audio" data-l="Sesli" onclick="sc('audio')"></div>
-  <div class="dot" data-t="about" data-l="Hakkında" onclick="sc('about')"></div>
-  <div class="dot" data-t="contact" data-l="İletişim" onclick="sc('contact')"></div>
-</div>
+    <nav class="site-nav" id="siteNav" aria-label="Ana menü">
+      <a href="#siirler">Şiirler</a>
+      <a href="#yazilar">Yazılar</a>
+      <a href="#sesli">Sesli Şiirler</a>
+      <a href="#hakkinda">Hakkında</a>
+      <a class="nav-cta" href="#iletisim">Bir söz bırak</a>
+    </nav>
+  </header>
 
-<!-- HERO -->
-<section class="sec" id="hero">
-  <div class="h-bg"></div><div class="grain"></div>
-  <div class="hc">
-    <p class="h-eye">Şair &nbsp;·&nbsp; Gözlemci &nbsp;·&nbsp; Sessiz Düşünür</p>
-    <h1 class="h-title">Bazı sözler<br><em>sessizlikte</em><br>doğar.</h1>
-    <p class="h-sub">Modern dünyanın gürültüsü içinde kaybolan insanlara sade, samimi ve derin metinler.</p>
-    <div class="daily" id="daily" style="display:none">
-      <div class="daily-lbl">Günün Şiiri</div>
-      <div class="daily-t" id="daily-t"></div>
-      <div class="daily-e" id="daily-e"></div>
-    </div>
-    <button class="h-btn" onclick="sc('poems')"><div class="h-ln"></div>Şiirleri Keşfet</button>
-  </div>
-  <div class="scr"><div class="scr-b"></div><span class="scr-t">Aşağı Kaydır</span></div>
-</section>
-
-<!-- POEMS -->
-<section class="sec sp" id="poems" style="background:var(--bg2)">
-  <div class="sh rv"><span class="sn">02</span><h2 class="st">Benim <em>Şiirlerim</em></h2></div>
-  <div class="frow rv d1">
-    <button class="tag act" onclick="fp('',this)">Tümü</button>
-    <button class="tag" onclick="fp('Yalnızlık',this)">Yalnızlık</button>
-    <button class="tag" onclick="fp('İnsan',this)">İnsan</button>
-    <button class="tag" onclick="fp('Çocukluk',this)">Çocukluk</button>
-    <button class="tag" onclick="fp('Eski Zamanlar',this)">Eski Zamanlar</button>
-    <button class="tag" onclick="fp('Hayat',this)">Hayat</button>
-  </div>
-  <div class="prows rv d2" id="pl"></div>
-  <div class="lm-wrap" id="lmw">
-    <span class="lm-cnt" id="lmc"></span>
-    <button class="lm-btn" onclick="loadPoems(false)">Daha Fazla Yükle</button>
-  </div>
-  <div id="sentinel" style="height:1px"></div>
-</section>
-
-<!-- ARTICLES -->
-<section class="sec sp" id="articles" style="background:var(--bg3)">
-  <div class="sh rv"><span class="sn">03</span><h2 class="st">Benim <em>Yazılarım</em></h2></div>
-  <div class="agrid rv d1" id="ag"></div>
-  <div style="display:none;justify-content:center;padding:2rem 0" id="amw">
-    <button class="lm-btn" onclick="loadArticles(false)">Daha Fazla Yükle</button>
-  </div>
-</section>
-
-<!-- AUDIO -->
-<section class="sec sp" id="audio" style="background:var(--bg)">
-  <div class="sh rv"><span class="sn">04</span><h2 class="st">Sesli <em>Şiirler</em></h2></div>
-  <div class="aulist rv d1" id="al"></div>
-</section>
-
-<!-- ABOUT -->
-<section class="sec sp" id="about" style="background:var(--bg2)">
-  <div class="sh rv"><span class="sn">05</span><h2 class="st">Ben <em>Kimim</em></h2></div>
-  <div class="abin">
-    <p class="abq rv d1">"Ben filozof değilim.<br>Sadece <em>hayatı dikkatle</em><br>izleyen biriyim."</p>
-    <div class="abrule rv d2"></div>
-    <div class="abtxt rv d2">
-      <p>Çocukluğumu köyde geçirdim. Sokak lambalarının sarı ışığında, büyüklerimin sessizliğinde büyüdüm.</p>
-      <p class="s">Yazmaya başladığımda bir amacım yoktu. Sadece bazı şeylerin kaybolduğunu hissediyordum — eski mahalleler, eski sesler. Onları bir yere bırakmak istedim.</p>
-      <p>Şiir benim için not tutmaktır. Kimsenin bakmadığı anlarda gördüklerimi kaydetmektir.</p>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section class="sec sp" id="contact" style="background:var(--bg3)">
-  <div class="coin">
-    <h2 class="cobig rv">Bir söz <em>içinizde</em><br>kaldıysa —<br>yazın.</h2>
-    <ul class="colist rv d1">
-      <li class="coitem"><span class="col">E-posta</span><span class="cov" id="em-val"></span></li>
-      <li class="coitem"><span class="col">Instagram</span><span class="cov" id="ig-val"></span></li>
-    </ul>
-  </div>
-</section>
-
-<footer class="ft">
-  <p>© 2026 Çiftlik Filozofu</p>
-  <p style="font-style:italic;color:var(--gp)">"Dünya biraz yavaşladı."</p>
-</footer>
-
-<!-- POEM DETAIL OVERLAY -->
-<div class="ov2" id="pov" style="background:var(--bg)">
-  <button class="clbtn" onclick="close2('pov')">✕ &nbsp;Geri Dön</button>
-  <div class="ov2-in" id="poc"></div>
-</div>
-
-<!-- ARTICLE DETAIL OVERLAY -->
-<div class="ov2" id="aov" style="background:var(--bg3)">
-  <button class="clbtn" onclick="close2('aov')">✕ &nbsp;Geri Dön</button>
-  <div class="ov2-in" id="aoc"></div>
-</div>
-
-<script>
-/* ════ INIT CONFIG ════ */
-const SB_URL  = CF_CONFIG.supabaseUrl;
-const SB_KEY  = CF_CONFIG.supabaseAnonKey;
-document.getElementById('ig-link').textContent = CF_CONFIG.instagram;
-document.getElementById('em-link').textContent = CF_CONFIG.email;
-document.getElementById('ig-val').textContent  = CF_CONFIG.instagram;
-document.getElementById('em-val').textContent  = CF_CONFIG.email;
-
-const sb = supabase.createClient(SB_URL, SB_KEY);
-
-/* ════ UTILS ════ */
-const slugify = s => s.toLowerCase()
-  .replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s')
-  .replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c')
-  .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-
-const fmt = d => d
-  ? new Date(d).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})
-  : '';
-
-function ldHtml(msg='Yükleniyor...'){
-  return `<div class="ld"><div class="sp2"></div>${msg}</div>`;
-}
-
-function injectSchema(data, id) {
-  let el = document.getElementById(id);
-  if (!el) { el = document.createElement('script'); el.type='application/ld+json'; el.id=id; document.head.appendChild(el); }
-  el.textContent = JSON.stringify(data);
-}
-
-/* ════ POEMS — paginated ════ */
-const P_SIZE = 10;
-let pCat='', pPage=0, pTotal=0, pLoading=false, pDone=false;
-
-async function loadPoems(reset=true) {
-  if (pLoading || (!reset && pDone)) return;
-  pLoading = true;
-  if (reset) {
-    pPage=0; pDone=false; pTotal=0;
-    document.getElementById('pl').innerHTML = ldHtml('Şiirler yükleniyor...');
-    document.getElementById('lmw').style.display = 'none';
-  }
-  const from = pPage * P_SIZE, to = from + P_SIZE - 1;
-  let q = sb.from('poems')
-    .select('id,title,excerpt,category,created_at', {count:'exact'})
-    .order('created_at',{ascending:false})
-    .range(from, to);
-  if (pCat) q = q.eq('category', pCat);
-  const {data, error, count} = await q;
-  pLoading = false;
-  if (error) { document.getElementById('pl').innerHTML='<div class="empty">Yüklenemedi. Supabase bağlantısını kontrol et.</div>'; return; }
-  if (reset) {
-    pTotal = count || 0;
-    if (!data?.length) { document.getElementById('pl').innerHTML='<div class="empty">Henüz şiir eklenmemiş.</div>'; return; }
-    document.getElementById('pl').innerHTML = '';
-  }
-  const si = pPage * P_SIZE;
-  document.getElementById('pl').insertAdjacentHTML('beforeend',
-    (data||[]).map((p,i) => `
-    <div class="prow rv" onclick="openPoem('${p.id}')">
-      <div class="prl">
-        <div class="prn">${String(si+i+1).padStart(2,'0')}</div>
-        <div class="prt">${p.title}</div>
-        <div class="pre">${p.excerpt||''}</div>
+  <main>
+    <section class="hero section-shell" aria-labelledby="heroTitle">
+      <div class="hero-copy reveal">
+        <p class="eyebrow">Şair · Gözlemci · Sessiz Düşünür</p>
+        <h1 id="heroTitle">Bazı sözler<br><em>sessizlikte</em><br>doğar.</h1>
+        <p class="hero-lede">Modern dünyanın gürültüsü içinde kaybolan insanlara; sade, samimi ve derin metinler.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#siirler">Şiirleri keşfet <span>↘</span></a>
+          <button class="text-button" id="randomWordBtn">Bugünün sözünü oku</button>
+        </div>
       </div>
-      <div class="prr"><span class="prc">${p.category||''}</span><span class="pa">→</span></div>
-    </div>`).join('')
-  );
-  obsv();
-  pPage++;
-  pDone = pPage * P_SIZE >= pTotal;
-  const lmw = document.getElementById('lmw');
-  if (!pDone) {
-    lmw.style.display = 'flex';
-    document.getElementById('lmc').textContent = `${Math.min(pPage*P_SIZE,pTotal)} / ${pTotal} şiir`;
-  } else { lmw.style.display='none'; }
-  // Schema — ilk yüklemede
-  if (reset && data?.length) {
-    injectSchema({"@context":"https://schema.org","@type":"ItemList","name":"Çiftlik Filozofu Şiirleri","numberOfItems":pTotal,
-      "itemListElement":(data||[]).map((p,i)=>({"@type":"ListItem","position":i+1,"item":{"@type":"CreativeWork","name":p.title,"url":`${CF_CONFIG.siteUrl}/siirler/${slugify(p.title)}`}}))
-    },'poems-schema');
-  }
-}
 
-function fp(c,el) {
-  pCat=c;
-  document.querySelectorAll('.tag').forEach(t=>t.classList.remove('act'));
-  el.classList.add('act');
-  loadPoems(true);
-}
-
-/* ════ POEM DETAIL ════ */
-async function openPoem(id) {
-  document.getElementById('poc').innerHTML = ldHtml();
-  open2('pov');
-  const {data,error} = await sb.from('poems').select('*').eq('id',id).single();
-  if (error||!data) { document.getElementById('poc').innerHTML='<div class="empty">Şiir bulunamadı.</div>'; return; }
-  document.getElementById('poc').innerHTML = `
-    <div class="ov2-t">${data.title}</div>
-    <div class="ov2-m">${fmt(data.created_at)} &nbsp;·&nbsp; ${data.category||''}</div>
-    <div class="ov2-r"></div>
-    <div class="ov2-body">${data.content}</div>
-    <div class="ov2-share">
-      <span class="sl">Paylaş</span>
-      <button class="sb" id="copy-btn">Kopyala</button>
-    </div>`;
-  document.getElementById('copy-btn').onclick = () =>
-    navigator.clipboard.writeText(`${data.title}\n\n${data.content}\n\n— Çiftlik Filozofu`).catch(()=>{});
-  injectSchema({"@context":"https://schema.org","@type":"CreativeWork","name":data.title,
-    "author":{"@id":`${CF_CONFIG.siteUrl}/#person`},"datePublished":data.created_at,
-    "genre":data.category,"inLanguage":"tr","url":`${CF_CONFIG.siteUrl}/siirler/${slugify(data.title)}`
-  },'pd-schema');
-}
-
-/* ════ ARTICLES — paginated ════ */
-const A_SIZE = 8;
-let aPage=0, aTotal=0, aLoading=false, aDone=false;
-
-async function loadArticles(reset=true) {
-  if (aLoading || (!reset && aDone)) return;
-  aLoading = true;
-  if (reset) {
-    aPage=0; aDone=false;
-    document.getElementById('ag').innerHTML = ldHtml('Yazılar yükleniyor...');
-    document.getElementById('amw').style.display = 'none';
-  }
-  const from = aPage * A_SIZE, to = from + A_SIZE - 1;
-  const {data,error,count} = await sb.from('articles')
-    .select('id,title,excerpt,created_at',{count:'exact'})
-    .order('created_at',{ascending:false})
-    .range(from,to);
-  aLoading = false;
-  if (error) { document.getElementById('ag').innerHTML='<div class="empty">Yüklenemedi.</div>'; return; }
-  if (reset) {
-    aTotal = count||0;
-    if (!data?.length) { document.getElementById('ag').innerHTML='<div class="empty" style="padding:3rem 2rem">Henüz yazı yok.</div>'; return; }
-    document.getElementById('ag').innerHTML = '';
-  }
-  const si = aPage * A_SIZE;
-  document.getElementById('ag').insertAdjacentHTML('beforeend',
-    (data||[]).map((a,i)=>`
-    <div class="acard" onclick="openArticle('${a.id}')">
-      <div class="an">${String(si+i+1).padStart(2,'0')}</div>
-      <div class="at">${a.title}</div>
-      <div class="ae">${a.excerpt||''}</div>
-      <div class="ad">${fmt(a.created_at)}</div>
-    </div>`).join('')
-  );
-  aPage++;
-  aDone = aPage * A_SIZE >= aTotal;
-  document.getElementById('amw').style.display = aDone ? 'none' : 'flex';
-}
-
-/* ════ ARTICLE DETAIL ════ */
-async function openArticle(id) {
-  document.getElementById('aoc').innerHTML = ldHtml();
-  open2('aov');
-  const {data,error} = await sb.from('articles').select('*').eq('id',id).single();
-  if (error||!data) { document.getElementById('aoc').innerHTML='<div class="empty">Yazı bulunamadı.</div>'; return; }
-  const paras = data.content.split('\n\n').map(p=>p.trim()).filter(Boolean);
-  document.getElementById('aoc').innerHTML = `
-    <div class="ov2-t">${data.title}</div>
-    <div class="ov2-m">${fmt(data.created_at)}</div>
-    <div class="ov2-r"></div>
-    <div class="ov2-prose">${paras.map((p,i)=>`<p class="${i>0?'s':''}">${p.replace(/\n/g,'<br>')}</p>`).join('')}</div>`;
-  injectSchema({"@context":"https://schema.org","@type":"Article","headline":data.title,
-    "description":data.excerpt||'',"author":{"@id":`${CF_CONFIG.siteUrl}/#person`},
-    "datePublished":data.created_at,"inLanguage":"tr",
-    "url":`${CF_CONFIG.siteUrl}/yazilar/${slugify(data.title)}`
-  },'ad-schema');
-}
-
-/* ════ AUDIO ════ */
-let paIdx = -1;
-async function loadAudio() {
-  document.getElementById('al').innerHTML = ldHtml('Ses dosyaları yükleniyor...');
-  const {data,error} = await sb.from('audio').select('*').order('created_at',{ascending:false});
-  if (error||!data?.length) { document.getElementById('al').innerHTML='<div class="empty">Henüz sesli şiir yok.</div>'; return; }
-  document.getElementById('al').innerHTML = data.map((a,i)=>`
-    <div class="auitem">
-      <div class="auh">
-        <button class="aupb" id="apb${i}" onclick="taAu(${i})">${a.audio_url?'▶':'○'}</button>
-        <div class="aut">${a.title}</div>
+      <div class="hero-art reveal" aria-label="Gece, kır ve yalnız ağaçtan esinlenen soyut çizim">
+        <svg viewBox="0 0 720 820" role="img" aria-hidden="true">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#1a2219"/>
+              <stop offset="1" stop-color="#0d100c"/>
+            </linearGradient>
+            <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0" stop-color="#dfc892" stop-opacity=".34"/>
+              <stop offset="1" stop-color="#dfc892" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="720" height="820" rx="240" fill="url(#sky)"/>
+          <circle cx="490" cy="245" r="150" fill="url(#moonGlow)"/>
+          <circle cx="490" cy="245" r="66" fill="#d9c28f" opacity=".92"/>
+          <path d="M0 592 C150 542 274 560 375 596 C500 640 610 605 720 565 L720 820 L0 820Z" fill="#151c13"/>
+          <path d="M0 655 C124 620 236 635 350 672 C468 710 588 670 720 634 L720 820 L0 820Z" fill="#0a0d09"/>
+          <path d="M250 642 C267 545 282 447 304 345 C320 293 349 253 388 222" fill="none" stroke="#090b08" stroke-width="18" stroke-linecap="round"/>
+          <path d="M306 366 C240 324 212 270 199 215 M320 320 C386 309 425 270 449 218 M289 437 C235 405 195 400 156 406 M294 404 C354 384 403 393 448 424" fill="none" stroke="#090b08" stroke-width="12" stroke-linecap="round"/>
+          <g fill="#0a0d09">
+            <ellipse cx="190" cy="212" rx="50" ry="22" transform="rotate(30 190 212)"/>
+            <ellipse cx="221" cy="279" rx="53" ry="22" transform="rotate(25 221 279)"/>
+            <ellipse cx="447" cy="216" rx="55" ry="22" transform="rotate(-35 447 216)"/>
+            <ellipse cx="418" cy="284" rx="48" ry="19" transform="rotate(-16 418 284)"/>
+            <ellipse cx="160" cy="407" rx="50" ry="18" transform="rotate(8 160 407)"/>
+            <ellipse cx="448" cy="426" rx="52" ry="18" transform="rotate(12 448 426)"/>
+          </g>
+          <g stroke="#bda873" stroke-width="2" opacity=".7">
+            <path d="M370 320 v110"/><path d="M404 340 v94"/><path d="M232 351 v82"/>
+          </g>
+          <g fill="#d5c6a0">
+            <rect x="357" y="427" width="27" height="39" rx="2" transform="rotate(6 357 427)"/>
+            <rect x="393" y="431" width="25" height="35" rx="2" transform="rotate(-5 393 431)"/>
+            <rect x="220" y="429" width="25" height="35" rx="2" transform="rotate(5 220 429)"/>
+          </g>
+        </svg>
+        <div class="art-caption"><span>01</span><p>Biraz yavaşlamak için<br>bir yer.</p></div>
       </div>
-      <div class="aud">${a.description||''}</div>
-      <div class="auwv" data-t="${a.duration||''}" onclick="seekAu(${i},event)">
-        <div class="auwvf" id="awf${i}" style="width:0%"></div>
+
+      <a class="scroll-cue" href="#siirler" aria-label="Aşağı kaydır">
+        <span>Aşağı kaydır</span><b>↓</b>
+      </a>
+    </section>
+
+    <section class="quote-band reveal" aria-label="Günün sözü">
+      <p class="quote-index">Günün sözü</p>
+      <blockquote id="dailyQuote">“İnsan bazen kendini en çok, kimseye anlatmadığı yerde bulur.”</blockquote>
+      <button class="quote-refresh" id="quoteRefresh" aria-label="Başka bir söz göster">↻</button>
+    </section>
+
+    <section class="content-section section-shell" id="siirler">
+      <div class="section-heading reveal">
+        <div>
+          <p class="eyebrow">01 · Şiirler</p>
+          <h2>İçinde biraz<br><em>sessizlik</em> taşıyanlar.</h2>
+        </div>
+        <p>Bir çocuğun bakışı, eski bir sokağın kokusu, bir vedanın geride bıraktığı ses… Şiirler burada acele etmeden okunur.</p>
       </div>
-    </div>`).join('');
-}
-function taAu(i){const b=document.getElementById('apb'+i);if(paIdx===i){b.textContent='▶';paIdx=-1;}else{document.querySelectorAll('.aupb').forEach(x=>x.textContent='▶');b.textContent='⏸';paIdx=i;}}
-function seekAu(i,e){const el=e.currentTarget;document.getElementById('awf'+i).style.width=Math.max(0,Math.min(100,((e.clientX-el.getBoundingClientRect().left)/el.offsetWidth)*100))+'%';}
 
-/* ════ GÜNÜN ŞİİRİ ════ */
-async function loadDaily() {
-  const {data,error} = await sb.rpc('get_random_poem');
-  if (error||!data?.length) return;
-  const p = data[0];
-  document.getElementById('daily-t').textContent = p.title;
-  document.getElementById('daily-t').onclick = ()=>openPoem(p.id);
-  document.getElementById('daily-e').textContent = p.excerpt||'';
-  document.getElementById('daily').style.display = 'block';
-}
+      <div class="filter-row reveal" role="group" aria-label="Şiir kategorileri">
+        <button class="filter-chip active" data-filter="all">Tümü</button>
+        <button class="filter-chip" data-filter="yalnizlik">Yalnızlık</button>
+        <button class="filter-chip" data-filter="insan">İnsan</button>
+        <button class="filter-chip" data-filter="cocukluk">Çocukluk</button>
+        <button class="filter-chip" data-filter="eski-zamanlar">Eski Zamanlar</button>
+        <button class="filter-chip" data-filter="hayat">Hayat</button>
+      </div>
 
-/* ════ OVERLAYS ════ */
-function open2(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
-function close2(id){document.getElementById(id).classList.remove('open');document.body.style.overflow='';}
+      <div class="poem-grid" id="poemGrid"></div>
 
-/* ════ NAV ════ */
-let mo=false;
-function tgl(){mo=!mo;document.getElementById('brg').classList.toggle('open',mo);document.getElementById('ov').classList.toggle('open',mo);document.body.style.overflow=mo?'hidden':'';}
-function go(id){if(mo)tgl();setTimeout(()=>sc(id),420);}
-function sc(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'});}
+      <div class="section-footer reveal">
+        <button class="button button-ghost" id="showAllPoems">Bütün şiirleri göster <span>→</span></button>
+      </div>
+    </section>
 
-const SECS=['hero','poems','articles','audio','about','contact'];
-function ud(){
-  let cur=SECS[0];
-  SECS.forEach(id=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=window.innerHeight*.5)cur=id;});
-  document.querySelectorAll('.dot').forEach(d=>d.classList.toggle('act',d.dataset.t===cur));
-  ['mn0','mn1','mn2','mn3','mn4','mn5'].forEach((m,i)=>{const el=document.getElementById(m);if(el)el.classList.toggle('act',SECS[i]===cur);});
-}
+    <section class="content-section writings section-shell" id="yazilar">
+      <div class="section-heading split-heading reveal">
+        <div>
+          <p class="eyebrow">02 · Yazılar</p>
+          <h2>Hayata kenardan<br>bakınca görünenler.</h2>
+        </div>
+        <p>Gündelik hayatın içinde gözden kaçan küçük şeyler. Bazen bir düşünce, bazen bir anı, bazen yalnızca insanın kendine söylediği bir cümle.</p>
+      </div>
+      <div class="writing-list" id="writingList"></div>
+    </section>
 
-/* ════ REVEAL ════ */
-function obsv(){
-  const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('vis');obs.unobserve(x.target);}});},{threshold:.08});
-  document.querySelectorAll('.rv:not(.vis)').forEach(el=>obs.observe(el));
-}
+    <section class="audio-section" id="sesli">
+      <div class="section-shell audio-shell">
+        <div class="audio-intro reveal">
+          <p class="eyebrow">03 · Sesli Şiirler</p>
+          <h2>Bazı şiirler<br><em>okunmaz, duyulur.</em></h2>
+          <p>Kelimelerin arasındaki sessizliği de duymak isteyenler için.</p>
+        </div>
+        <div class="player-card reveal">
+          <div class="player-topline"><span>Şimdi dinle</span><span id="playerTime">00:00 / 01:18</span></div>
+          <div class="player-title">
+            <button class="play-button" id="playButton" aria-label="Örnek sesi oynat">▶</button>
+            <div><strong>Sessizliğin Kıyısında</strong><small>Çiftlik Filozofu · Sesli Şiir</small></div>
+          </div>
+          <div class="waveform" id="waveform" aria-hidden="true"></div>
+          <p class="player-note">Bu alan mevcut ses kayıtların bağlandığında gerçek oynatıcı olarak çalışacak.</p>
+        </div>
+      </div>
+    </section>
 
-/* ════ INFINITE SCROLL ════ */
-function setupIS(){
-  const obs=new IntersectionObserver(e=>{if(e[0].isIntersecting)loadPoems(false);},{rootMargin:'200px'});
-  const s=document.getElementById('sentinel');
-  if(s) obs.observe(s);
-}
+    <section class="about-section section-shell" id="hakkinda">
+      <div class="about-number reveal">04</div>
+      <div class="about-quote reveal">
+        <p>Ben filozof değilim.</p>
+        <p>Sadece hayatı dikkatle</p>
+        <p><em>izleyen biriyim.</em></p>
+      </div>
+      <div class="about-copy reveal">
+        <p>Çocukluğumu köyde geçirdim. Sokak lambalarının sarı ışığında, büyüklerimin sessizliğinde büyüdüm.</p>
+        <p>Yazmaya başladığımda bir amacım yoktu. Sadece bazı şeylerin kaybolduğunu hissediyordum — eski mahalleler, eski sesler. Onları bir yere bırakmak istedim.</p>
+        <p>Şiir benim için not tutmaktır. Kimsenin bakmadığı anlarda gördüklerimi kaydetmektir.</p>
+        <div class="signature">Çiftlik Filozofu</div>
+      </div>
+    </section>
 
-/* ════ CURSOR ════ */
-const C=document.getElementById('cur'),CR=document.getElementById('curr');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;C.style.left=mx+'px';C.style.top=my+'px';});
-(function a(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;CR.style.left=rx+'px';CR.style.top=ry+'px';requestAnimationFrame(a);})();
+    <section class="contact-section" id="iletisim">
+      <div class="section-shell contact-shell reveal">
+        <p class="eyebrow">05 · İletişim</p>
+        <h2>Bir söz içinizde<br>kaldıysa — <em>yazın.</em></h2>
+        <div class="contact-links">
+          <a href="mailto:merhaba@ciftlikfilozofu.com">E-posta <span>↗</span></a>
+          <a href="https://www.instagram.com/ciftlikfilozofu/" target="_blank" rel="noopener noreferrer">Instagram <span>↗</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
 
-/* ════ BOOT ════ */
-(async()=>{
-  await Promise.all([loadPoems(true), loadArticles(true), loadAudio(), loadDaily()]);
-  obsv();
-  setupIS();
-})();
-window.addEventListener('scroll',()=>{ud();obsv();});
-</script>
+  <footer class="site-footer section-shell">
+    <div class="footer-brand"><span class="brand-mark">ÇF</span><strong>Çiftlik Filozofu</strong></div>
+    <p>© 2026 Çiftlik Filozofu</p>
+    <a href="#top">Yukarı dön ↑</a>
+  </footer>
+
+  <dialog class="content-modal" id="contentModal">
+    <button class="modal-close" id="modalClose" aria-label="Kapat">×</button>
+    <div class="modal-meta" id="modalMeta"></div>
+    <h3 id="modalTitle"></h3>
+    <div class="modal-body" id="modalBody"></div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="content.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
