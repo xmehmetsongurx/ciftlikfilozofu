@@ -19,11 +19,11 @@ async function load(){
       client.from('site_settings').select('*').eq('id',1).maybeSingle(),
       client.from('audio_poems').select('*').eq('status','published').order('featured',{ascending:false}).order('created_at',{ascending:false})
     ]);
-    if(!pr.error&&pr.data?.length)poems=pr.data;
-    if(!wr.error&&wr.data?.length)writings=wr.data;
-    if(!qr.error&&qr.data?.length)quotes=qr.data;
+    if(!pr.error) poems = pr.data || [];
+    if(!wr.error) writings = wr.data || [];
+    if(!qr.error) quotes = qr.data || [];
     if(!sr.error&&sr.data)settings={...settings,...sr.data};
-    if(!ar.error&&ar.data?.length)audio=ar.data;
+    if(!ar.error) audio = ar.data || [];
   }catch(e){console.warn('Supabase yüklenemedi, yedek içerik gösteriliyor.',e)}
 }
 
